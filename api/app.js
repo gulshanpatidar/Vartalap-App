@@ -23,7 +23,7 @@ app.use(express.json());
 app.use('/auth',authRoutes);
 app.get('/',(req,res,next) => {
     res.json({ 
-        "title" : "Hello from suru chat api"
+        "title" : "Hello from Suru Chat api"
     })
 })
 
