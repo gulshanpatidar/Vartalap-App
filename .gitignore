@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/api/node_modules
+.env
