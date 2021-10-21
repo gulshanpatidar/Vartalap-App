@@ -6,7 +6,9 @@ const { validationResult } = require('express-validator');
 
 // function for user signup
 exports.userSignup = async (req,res,next) => {
+  console.log(req.body.username,req.body.email,req.body.password)
     const errors = validationResult(req);
+    console.log(errors)
     if(!errors.isEmpty()) {
         const error = new Error('Validation failed,entered data is incorrect');
         error.statusCode = 422;
@@ -26,6 +28,7 @@ exports.userSignup = async (req,res,next) => {
        res.status(200).json({
            message:"User Signup Successfully"
        })
+       console.log(message)
     }catch (err) {
         if (!err.statusCode) {
           err.statusCode = 500;
