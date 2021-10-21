@@ -1,4 +1,4 @@
-package com.example.suruchat_app
+package com.example.suruchat_app.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
-                    ScaffoldUse(navController = navController, viewModel = viewModel)
+                    ScaffoldUse(navController = navController,viewModel = viewModel)
                 }
             }
         }

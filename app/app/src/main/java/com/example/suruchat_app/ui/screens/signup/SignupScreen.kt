@@ -39,6 +39,8 @@ fun SignupScreen(navController: NavHostController) {
     }
     var passwordVisibility = remember { mutableStateOf(false) }
 
+    val viewModel = SignupViewModel(navController = navController)
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -85,20 +87,18 @@ fun SignupScreen(navController: NavHostController) {
                 label = {
                     Text(text = "Username")
                 },
-                placeholder = { Text(text = "username") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             OutlinedTextField(
-                value = username,
+                value = email,
                 onValueChange = {
-                    username = it
+                    email = it
                 },
                 label = {
                     Text(text = "Email Address")
                 },
-                placeholder = { Text(text = "Email Address") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(0.8f)
@@ -116,13 +116,14 @@ fun SignupScreen(navController: NavHostController) {
                         Icon(imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = "password",tint = Color.Gray)
                     }
                 },
-                placeholder = { Text(text = "Password") },
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             Spacer(modifier = Modifier.padding(10.dp))
             Button(
-                onClick = {  },
+                onClick = {
+                          viewModel.doSignup(username, email, password)
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp)

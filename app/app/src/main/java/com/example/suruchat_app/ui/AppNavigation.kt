@@ -1,7 +1,9 @@
 package com.example.suruchat_app.ui
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,23 +18,21 @@ import com.example.suruchat_app.ui.util.Routes
 
 @Composable
 fun AppNavigation(
-    viewModel: HomeViewModel,
     navController: NavHostController,
+    viewModel: HomeViewModel,
     innerPadding: PaddingValues
 ) {
 
-    NavHost(navController = navController, startDestination = Routes.Splash.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Routes.Splash.route,
+        modifier = Modifier.padding(innerPadding)
+    ) {
 
         composable(
-            Routes.Home.route+"/{userId}/{token}",
-            arguments = listOf(
-                navArgument("userId") { NavType.StringType },
-                navArgument("token") { NavType.StringType }
-            )
-        ) { backStackEntry->
-            val userId = backStackEntry.arguments?.getString("userId")
-            val token = backStackEntry.arguments?.getString("token")
-            HomeScreen(viewModel = viewModel, navController,userId,token)
+            Routes.Home.route
+        ) { backStackEntry ->
+            HomeScreen(navController = navController, viewModel = viewModel)
         }
 
         composable(Routes.Splash.route) {

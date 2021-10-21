@@ -1,6 +1,5 @@
 package com.example.suruchat_app.ui.screens.login
 
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.R
-import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
@@ -38,9 +35,6 @@ fun LoginScreen(navController: NavHostController) {
         mutableStateOf("")
     }
     val passwordVisibility = remember { mutableStateOf(false) }
-    var clickOnLogin by remember {
-        mutableStateOf(false)
-    }
     val viewModel = LoginViewModel(navcontroller = navController)
 
     Box(
@@ -71,7 +65,7 @@ fun LoginScreen(navController: NavHostController) {
                 .padding(10.dp)
                 .verticalScroll(ScrollState(0))
         ) {
-            
+
             Text(
                 text = "LOGIN",
                 fontSize = 30.sp,
@@ -89,7 +83,6 @@ fun LoginScreen(navController: NavHostController) {
                 label = {
                     Text(text = "Username")
                 },
-                placeholder = { Text(text = "username") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(0.8f)
@@ -104,17 +97,22 @@ fun LoginScreen(navController: NavHostController) {
                 },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                        Icon(imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = "password",tint = Color.Gray)
+                        Icon(
+                            imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = "password",
+                            tint = Color.Gray
+                        )
                     }
                 },
-                placeholder = { Text(text = "Password") },
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             Spacer(modifier = Modifier.padding(10.dp))
             Text(text = viewModel.userId.value)
             Button(
-                onClick = { viewModel.doLogin(username, password) },
+                onClick = {
+                    viewModel.doLogin(username, password)
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp)
@@ -126,8 +124,8 @@ fun LoginScreen(navController: NavHostController) {
             Text(
                 text = "Create An Account",
                 modifier = Modifier.clickable(onClick = {
-                    navController.navigate(Routes.SignUp.route){
-                        popUpTo(Routes.Login.route){
+                    navController.navigate(Routes.SignUp.route) {
+                        popUpTo(Routes.Login.route) {
                             inclusive = true
                         }
                         launchSingleTop = true
@@ -138,3 +136,4 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
+

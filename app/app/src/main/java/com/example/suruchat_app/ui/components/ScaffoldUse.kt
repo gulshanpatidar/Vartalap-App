@@ -15,14 +15,14 @@ fun ScaffoldUse(navController: NavHostController,viewModel: HomeViewModel) {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar(viewModel = viewModel) {
+            TopBar() {
 
             }
         }
     ) { innerPadding ->
         AppNavigation(
-            viewModel = viewModel,
             navController = navController,
+            viewModel = viewModel,
             innerPadding = innerPadding
         )
     }

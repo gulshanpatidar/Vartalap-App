@@ -22,7 +22,7 @@ class LoginViewModel(val navcontroller: NavHostController) : ViewModel() {
             userId.value = response.userId
             token.value = response.token
             if (userId.value.isNotEmpty()) {
-                navcontroller.navigate(Routes.Home.route+"/${userId.value}/${token.value}"){
+                navcontroller.navigate(Routes.Home.route){
                     popUpTo(Routes.Login.route){
                         inclusive = true
                     }
