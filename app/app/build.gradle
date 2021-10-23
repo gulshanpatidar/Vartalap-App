@@ -8,6 +8,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\gulsh\\Desktop\\suruChatKeyStore.jks')
+            storePassword 'Kuchbhi@123'
+            keyAlias 'gulshan'
+            keyPassword 'Kuchbhi@123'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
@@ -26,9 +34,11 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -79,7 +89,7 @@ dependencies {
     // navigation
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha10"
     //animations
-    implementation "androidx.compose.animation:animation:1.1.0-alpha05"
+    implementation "androidx.compose.animation:animation:1.1.0-alpha06"
     implementation "androidx.core:core-animation:1.0.0-alpha02"
 
     //material icons
@@ -90,5 +100,11 @@ dependencies {
     //hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-compiler:2.38.1"
+    //live data
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    //lifecycle-livedata
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
+    implementation "androidx.hilt:hilt-navigation-fragment:1.0.0"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
 
 }

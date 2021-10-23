@@ -13,12 +13,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    userPreferences: UserPreferences
 ) {
     val messages = remember {
         mutableStateListOf(Message(author = "api", viewModel.helloMessage.value))
@@ -31,6 +33,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {
+                    viewModel.logout(userPreferences = userPreferences)
                     navController.navigate(Routes.Login.route) {
                         popUpTo(Routes.Home.route) {
                             inclusive = true
@@ -93,11 +96,11 @@ fun MessageCard(msg: Message) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(
-        viewModel = HomeViewModel(),
-        navController = rememberNavController()
-    )
-}
+//@Preview
+//@Composable
+//fun PreviewHomeScreen() {
+//    HomeScreen(
+//        viewModel = HomeViewModel(),
+//        navController = rememberNavController()
+//    )
+//}

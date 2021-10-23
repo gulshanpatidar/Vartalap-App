@@ -1,33 +1,47 @@
 package com.example.suruchat_app.ui.screens.login
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.navigation.NavHostController
+import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.ui.util.Routes
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class LoginViewModel(val navcontroller: NavHostController) : ViewModel() {
+class LoginViewModel(
+    val navcontroller: NavHostController,
+    private val userPreferences: UserPreferences
+) : ViewModel() {
 
     val userId = mutableStateOf("")
-    val token = mutableStateOf("")
-    val service = ChatService.create()
+    private var _token = MutableLiveData<String>()
+    var token : LiveData<String> = _token
+    private val service = ChatService.create()
+
+    init {
+        getUserToken()
+    }
 
     fun doLogin(username: String, password: String) {
         viewModelScope.launch {
             val response = service.login(username, password)
             userId.value = response.userId
-            token.value = response.token
+            _token.value = response.token
             if (userId.value.isNotEmpty()) {
-                navcontroller.navigate(Routes.Home.route){
-                    popUpTo(Routes.Login.route){
+                userPreferences.saveUserLoginToken(_token.value!!)
+                navcontroller.navigate(Routes.Home.route) {
+                    popUpTo(Routes.Login.route) {
                         inclusive = true
                     }
                 }
             }
+        }
+    }
+
+    private fun getUserToken() {
+        viewModelScope.launch {
+            token = userPreferences.userLoginToken.asLiveData()
         }
     }
 }
