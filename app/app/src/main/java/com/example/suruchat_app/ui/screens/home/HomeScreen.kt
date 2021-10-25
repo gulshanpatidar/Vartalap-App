@@ -1,19 +1,24 @@
 package com.example.suruchat_app.ui.screens.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.suruchat_app.data.local.UserPreferences
+import com.example.suruchat_app.data.remote.dto.User
+import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
@@ -22,85 +27,88 @@ fun HomeScreen(
     navController: NavHostController,
     userPreferences: UserPreferences
 ) {
-    val messages = remember {
-        mutableStateListOf(Message(author = "api", viewModel.helloMessage.value))
-    }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+    ScaffoldUse(
+        topBarTitle = "SuruChat",
+        onClickTopButton = { },
+        topButtonImageVector = Icons.Default.Menu,
+        viewModel = viewModel,
+        userPreferences = userPreferences,
+        navController = navController,
+        fabButton = {
+            FabButton {
+                navController.navigate(Routes.AddNewChat.route)
+            }
+        }
+    ) {
+        val users = remember {
+            mutableStateListOf(
+                User("Gulshan Patidar", "1"),
+                User("Tanish Gupta","2"),
+                User("Vishal Kumar","3"),
+                User("Suryansh Kumar","4")
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Button(
-                onClick = {
-                    viewModel.logout(userPreferences = userPreferences)
-                    navController.navigate(Routes.Login.route) {
-                        popUpTo(Routes.Home.route) {
-                            inclusive = true
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(10.dp))
+                LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
+                    items(users) {
+                        Column {
+                            UserOption(it){
+                                navController.navigate(Routes.Chat.route)
+                            }
+                            Divider()
                         }
                     }
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(text = "Log out")
-            }
-            LazyColumn(modifier = Modifier.fillMaxHeight(0.9f)) {
-                items(messages) {
-                    MessageCard(msg = it)
-                }
-            }
-            var message by remember {
-                mutableStateOf("")
-            }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                TextField(value = message, onValueChange = {
-                    message = it
-                })
-                IconButton(onClick = {
-                    messages.add(Message("user", message))
-                    message = ""
-                }) {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "send button")
                 }
             }
         }
     }
-
 }
 
 @Composable
-fun MessageCard(msg: Message) {
-    // We toggle the isExpanded variable when we click on this Column
-    Column() {
-        Text(
-            text = msg.author,
-            color = MaterialTheme.colors.secondaryVariant,
-            style = MaterialTheme.typography.subtitle2
+fun UserOption(user: User,onUserClicked: () -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .clickable {
+            onUserClicked()
+        }) {
+        Icon(
+            imageVector = Icons.Default.Person,
+            contentDescription = "Sender Image",
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
+                .padding(8.dp)
         )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            elevation = 1.dp,
-        ) {
-            Text(
-                text = msg.body,
-                modifier = Modifier.padding(all = 4.dp),
-                // If the message is expanded, we display all its content
-                // otherwise we only display the first line
-                maxLines = 1,
-                style = MaterialTheme.typography.body2
-            )
+        Column(modifier = Modifier.fillMaxWidth(0.8f)) {
+            Text(text = user.username, style = MaterialTheme.typography.body1)
+            Text(text = "Hello buddy...", style = MaterialTheme.typography.body2)
         }
+        Text(text = "09:00")
     }
 }
 
-//@Preview
-//@Composable
-//fun PreviewHomeScreen() {
-//    HomeScreen(
-//        viewModel = HomeViewModel(),
-//        navController = rememberNavController()
-//    )
-//}
+@Composable
+fun FabButton(onFabClicked: () -> Unit) {
+    FloatingActionButton(onClick = { onFabClicked() },elevation = FloatingActionButtonDefaults.elevation(8.dp)) {
+        Icon(imageVector = Icons.Default.Add, contentDescription = "")
+    }
+}
+
+@Preview
+@Composable
+fun PreviewUserOption() {
+    UserOption(User("Gulshan Patidar","1")){
+
+    }
+}

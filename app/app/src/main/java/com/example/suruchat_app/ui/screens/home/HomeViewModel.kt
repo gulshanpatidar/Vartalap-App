@@ -11,13 +11,13 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
 
     val helloMessage = mutableStateOf("Hello world")
-    val service = ChatService.create()
+    private val service = ChatService.create()
 
     init {
         getMessage()
     }
 
-    fun getMessage() {
+    private fun getMessage() {
         viewModelScope.launch {
             helloMessage.value = service.getChatResponse()
         }

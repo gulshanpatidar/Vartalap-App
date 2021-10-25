@@ -14,27 +14,31 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
 
 @Composable
-fun TopBar( onMenuClicked: () -> Unit) {
-
+fun TopBar(
+    title: String,
+    onTopButtonClicked: () -> Unit,
+    topButtonImageVector: ImageVector
+) {
     TopAppBar(
         title = {
-            Text(text = "SuruChat", color = Color.White)
+            Text(text = title, color = Color.White)
         },
-//        navigationIcon = {
-//            Icon(
-//                imageVector = Icons.Default.Menu,
-//                contentDescription = "Menu",
-//                //when click on menu, triggering function should call
-//                modifier = Modifier
-//                    .padding(start = 4.dp)
-//                    .clickable(onClick = onMenuClicked),
-//                tint = Color.White
-//            )
-//        },
+        navigationIcon = {
+            Icon(
+                imageVector = topButtonImageVector,
+                contentDescription = "",
+                //when click on menu, triggering function should call
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .clickable(onClick = onTopButtonClicked),
+                tint = Color.White
+            )
+        },
         backgroundColor = MaterialTheme.colors.primary
     )
 }

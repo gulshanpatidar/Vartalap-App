@@ -16,7 +16,7 @@ import com.example.suruchat_app.ui.theme.SuruChatAppTheme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: HomeViewModel by viewModels()
-    private var userPreferences: UserPreferences? = null
+    private lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,15 +27,14 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val context = LocalContext.current
                     userPreferences = UserPreferences(context)
-                    ScaffoldUse(navController = navController,viewModel = viewModel,userPreferences = userPreferences!!)
+                    AppNavigation(
+                        navController = navController,
+                        viewModel = viewModel,
+                        userPreferences = userPreferences
+                    )
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        userPreferences = null
     }
 }
 
