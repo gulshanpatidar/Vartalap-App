@@ -13,7 +13,13 @@ const userSchema = new Schema({
     email:{
         type:String,
         require:true
-    }
+    },
+    chatsId : [
+        {
+            type:Schema.Types.ObjectId,
+            ref : 'Chat'
+        }
+    ]
 })
 
 module.exports = mongoose.model('User', userSchema);
