@@ -5,7 +5,7 @@ const moongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI
 const authRoutes = require('./routes/auth');
-
+const userRoutes = require('./routes/user');
 
 // setting the header for accessing the api form anyhwhere
 app.use((req, res, next) => {
@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use('/auth',authRoutes);
+app.use('/user',userRoutes);
 app.get('/',(req,res,next) => {
     res.json({ 
         "title" : "Hello from Suru Chat api"
