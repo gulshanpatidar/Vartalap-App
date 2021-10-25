@@ -1,7 +1,7 @@
 const User  = require('../models/user');
 const Chat = require('../models/chat');
 const getChatedUsers = require('../utils/getChatedUsers');
-
+const getAnotherUser = require('../utils/anotheruser');
 
 // function for getting users chat 
 exports.getUserChats = async (req,res,next) => {
@@ -11,7 +11,8 @@ exports.getUserChats = async (req,res,next) => {
         const userchatsId = user.chatsid;
         
         for (let i = 0;i < userchatsId.length;i++) {
-           const chatteduser = await User.findById(userchatsId[i]);  
+           const anotheruserId = await getAnotherUser(userchatsId[i],req.userId)
+           const chatteduser = await User.findById(anotheruserId);  
            userChats.push({
                username : chatteduser.username,
                id : chatteduser._id,
@@ -58,7 +59,7 @@ exports.getAppUsers = async (req,res,next) => {
        const chatedUsers = await getChatedUsers(req.userId);
        const page = req.body.page || 0;
 
-       const users = await User.find({ _id : { $nin : [...chatedUsers,req.userId]}}).skip(page * 20).limit(20);
+       const users = await User.find({ _id : { $nin : chatedUsers}}).skip(page * 20).limit(20);
        const resUsers = users.map( user => ({
            username : user.username,
            id : user._id 
