@@ -14,7 +14,7 @@ const userSchema = new Schema({
         type:String,
         require:true
     },
-    chatsId : [
+    chatsid : [
         {
             type:Schema.Types.ObjectId,
             ref : 'Chat'
