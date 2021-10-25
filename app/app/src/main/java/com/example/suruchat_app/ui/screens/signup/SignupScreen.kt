@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +40,10 @@ fun SignupScreen(navController: NavHostController) {
     }
     var passwordVisibility = remember { mutableStateOf(false) }
 
+    val viewModel = SignupViewModel(navController = navController)
+
+    val message by viewModel.response.observeAsState("")
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -67,7 +72,6 @@ fun SignupScreen(navController: NavHostController) {
                 .padding(10.dp)
                 .verticalScroll(ScrollState(0))
         ) {
-
             Text(
                 text = "Sign Up",
                 fontSize = 30.sp,
@@ -77,6 +81,7 @@ fun SignupScreen(navController: NavHostController) {
                 )
             )
             Spacer(modifier = Modifier.height(20.dp))
+            Text(text = message, color = MaterialTheme.colors.error)
             OutlinedTextField(
                 value = username,
                 onValueChange = {
@@ -85,20 +90,18 @@ fun SignupScreen(navController: NavHostController) {
                 label = {
                     Text(text = "Username")
                 },
-                placeholder = { Text(text = "username") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             OutlinedTextField(
-                value = username,
+                value = email,
                 onValueChange = {
-                    username = it
+                    email = it
                 },
                 label = {
                     Text(text = "Email Address")
                 },
-                placeholder = { Text(text = "Email Address") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth(0.8f)
@@ -113,16 +116,21 @@ fun SignupScreen(navController: NavHostController) {
                 },
                 trailingIcon = {
                     IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                        Icon(imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff, contentDescription = "password",tint = Color.Gray)
+                        Icon(
+                            imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = "password",
+                            tint = Color.Gray
+                        )
                     }
                 },
-                placeholder = { Text(text = "Password") },
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
             Spacer(modifier = Modifier.padding(10.dp))
             Button(
-                onClick = {  },
+                onClick = {
+                    viewModel.doSignup(username, email, password)
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp)
@@ -134,8 +142,8 @@ fun SignupScreen(navController: NavHostController) {
             Text(
                 text = "Login Instead",
                 modifier = Modifier.clickable(onClick = {
-                    navController.navigate(Routes.Login.route){
-                        popUpTo(Routes.SignUp.route){
+                    navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.SignUp.route) {
                             inclusive = true
                         }
                         launchSingleTop = true
@@ -144,13 +152,5 @@ fun SignupScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.padding(20.dp))
         }
-    }
-}
-
-@Composable
-fun DoSignup() {
-    val service = ChatService.create()
-    LaunchedEffect(key1 = Unit) {
-        val text = service.signup("patidargulshan","ctempire6@gmail.com","1234567")
     }
 }

@@ -50,21 +50,21 @@ class ChatServiceImpl(
         } catch (e: RedirectResponseException) {
             // 3XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return e.response.status.description
         } catch (e: ClientRequestException) {
             // 4XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return e.response.status.description
         } catch (e: ServerResponseException) {
             // 5XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return e.response.status.description
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            null
+            return e.message.toString()
         }
 
-        return signupResponse?.message.toString()
+        return signupResponse.message
     }
 
     override suspend fun getChatResponse(): String {

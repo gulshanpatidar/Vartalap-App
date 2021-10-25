@@ -1,6 +1,5 @@
 package com.example.suruchat_app.ui.screens.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,17 +13,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavHostController,
-    userId: String?,
-    token: String?
+    userPreferences: UserPreferences
 ) {
     val messages = remember {
-        mutableListOf(Message(author = "api", viewModel.helloMessage.value))
+        mutableStateListOf(Message(author = "api", viewModel.helloMessage.value))
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -32,14 +31,16 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Spacer(modifier = Modifier.height(10.dp))
-            Button(onClick = {
-                navController.navigate(Routes.Login.route) {
-                    popUpTo(Routes.Home.route) {
-                        inclusive = true
+            Button(
+                onClick = {
+                    viewModel.logout(userPreferences = userPreferences)
+                    navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.Home.route) {
+                            inclusive = true
+                        }
                     }
-                }
-            },
-            modifier = Modifier.align(Alignment.End)
+                },
+                modifier = Modifier.align(Alignment.End)
             ) {
                 Text(text = "Log out")
             }
@@ -54,8 +55,11 @@ fun HomeScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(value = message, onValueChange = {
                     message = it
-                } )
-                IconButton(onClick = { messages.add(Message("user",message)) }) {
+                })
+                IconButton(onClick = {
+                    messages.add(Message("user", message))
+                    message = ""
+                }) {
                     Icon(imageVector = Icons.Default.Send, contentDescription = "send button")
                 }
             }
@@ -92,13 +96,11 @@ fun MessageCard(msg: Message) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(
-        viewModel = HomeViewModel(),
-        navController = rememberNavController(),
-        userId = "",
-        token = ""
-    )
-}
+//@Preview
+//@Composable
+//fun PreviewHomeScreen() {
+//    HomeScreen(
+//        viewModel = HomeViewModel(),
+//        navController = rememberNavController()
+//    )
+//}

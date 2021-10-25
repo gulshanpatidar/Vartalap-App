@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
 
 @Composable
-fun TopBar(viewModel: HomeViewModel, onMenuClicked: () -> Unit) {
+fun TopBar( onMenuClicked: () -> Unit) {
 
     TopAppBar(
         title = {
