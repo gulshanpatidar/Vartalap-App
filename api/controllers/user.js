@@ -2,6 +2,7 @@ const User  = require('../models/user');
 const Chat = require('../models/chat');
 const getChatedUsers = require('../utils/getChatedUsers');
 const getAnotherUser = require('../utils/anotheruser');
+const cloudinary = require('cloudinary').v2;
 
 // function for getting users chat 
 exports.getUserChats = async (req,res,next) => {
@@ -14,9 +15,10 @@ exports.getUserChats = async (req,res,next) => {
            const anotheruserId = await getAnotherUser(userchatsId[i],req.userId)
            const chatteduser = await User.findById(anotheruserId);  
            userChats.push({
-               username : chatteduser.username,
+               fullname : chatteduser.fullname,
                id : chatteduser._id,
-               chatid : userchatsId[i]
+               chatid : userchatsId[i],
+               imageurl : user.imageurl
            })
         }
 
@@ -60,9 +62,11 @@ exports.getAppUsers = async (req,res,next) => {
        const page = req.body.page || 0;
 
        const users = await User.find({ _id : { $nin : chatedUsers}}).skip(page * 20).limit(20);
+    
        const resUsers = users.map( user => ({
-           username : user.username,
-           id : user._id 
+           fullname : user.fullname,
+           id : user._id ,
+           imageurl : user.imageurl
        }))
        res.status(200).json({
            users : resUsers  
@@ -110,8 +114,7 @@ exports.startChat = async (req,res,next) => {
 
 // function for adding message to the database
 exports.addMessage = async (req,res,next) => {
-    const chatId = req.body.chatId;
-    const { text,createdAt} = req.body;
+    const { text,createdAt,chatId} = req.body;
     try {
       const chat = await Chat.findById(chatId);
       const messages = chat.messages;
@@ -127,4 +130,29 @@ exports.addMessage = async (req,res,next) => {
         }
          next(err);
        } 
+}
+
+
+// function for handling the image upload feature
+exports.userImageupload = async (req,res,next) => {
+  try {
+     const imageurl = req.file.path;
+     const imagename = req.file.filename;
+     const user = await User.findById(req.userId);
+     if (user.imageurl) {
+        await cloudinary.uploader.destroy(user.imagename);
+     }
+     user.imageurl = imageurl;
+     user.imagename = imagename;
+     await user.save();
+     res.status(200).json({
+             imageurl : imageurl
+         }
+     )
+  }  catch (e){
+    if(! err.statusCode) {
+        err.statusCode = 500
+    }
+     next(err);
+   } 
 }
