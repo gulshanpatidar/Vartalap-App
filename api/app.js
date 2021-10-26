@@ -1,11 +1,14 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const express = require("express");
-const app = express();
 const moongoose = require('mongoose');
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI
+const app = express();
 
 // setting the header for accessing the api form anyhwhere
 app.use((req, res, next) => {

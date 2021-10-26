@@ -1,8 +1,7 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-
+const User = require('../models/user');
 
 // function for user signup
 exports.userSignup = async (req,res,next) => {
@@ -15,15 +14,18 @@ exports.userSignup = async (req,res,next) => {
     }
     const username = req.body.username;
     const email = req.body.email;
+    const fullname = req.body.fullname;
     const password = req.body.password;
     try {
         const hashedPw = await bcrypt.hash(password, 12);
         const user = new  User({
             username:username,
+            fullname : fullname,
             email:email,
-            password:hashedPw
+            password:hashedPw,
         })
        await user.save();
+
        res.status(200).json({
            message:"User Signup Successfully"
        })
@@ -63,7 +65,7 @@ exports.userLogin = async (req,res,next) => {
    { expiresIn: '23h' }
  );
 
- res.status(200).json({ token: token, userId: loadedUser._id.toString()});
+ res.status(200).json({ token: token, userId: loadedUser._id.toString(),fullname : loadedUser.fullname,imageurl : loadedUser.imageurl});
  } catch (err) {
     if(! err.statusCode) {
         err.statusCode = 500
