@@ -7,4 +7,6 @@ object HttpRoutes {
     const val LOGIN = "$BASE_URL/auth/login"
 
     const val SIGNUP = "$BASE_URL/auth/signup"
+
+    const val USER_CHATS = "$BASE_URL/user/userchats"
 }

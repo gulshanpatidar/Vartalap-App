@@ -3,6 +3,7 @@ package com.example.suruchat_app.data.remote
 import com.example.suruchat_app.data.remote.HttpRoutes.BASE_URL
 import com.example.suruchat_app.data.remote.HttpRoutes.LOGIN
 import com.example.suruchat_app.data.remote.HttpRoutes.SIGNUP
+import com.example.suruchat_app.data.remote.HttpRoutes.USER_CHATS
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.data.remote.dto.*
 import io.ktor.client.*
@@ -67,26 +68,26 @@ class ChatServiceImpl(
         return signupResponse.message
     }
 
-    override suspend fun getChatResponse(): String {
+    override suspend fun getUserChats(): List<UserChat> {
         val chatResponse = try {
-            client.get<ChatResponse>(BASE_URL)
+            client.get<ChatResponse>(USER_CHATS)
         } catch (e: RedirectResponseException) {
             // 3XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return emptyList()
         } catch (e: ClientRequestException) {
             // 4XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return emptyList()
         } catch (e: ServerResponseException) {
             // 5XX responses
             println("Error: ${e.response.status.description}")
-            null
+            return emptyList()
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            null
+            return emptyList()
         }
 
-        return chatResponse?.title.toString()
+        return chatResponse.users
     }
 }

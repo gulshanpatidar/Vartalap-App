@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChatResponse(
-    val title: String
+    val users: List<UserChat>
 )

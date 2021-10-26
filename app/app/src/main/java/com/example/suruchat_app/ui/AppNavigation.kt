@@ -1,13 +1,12 @@
 package com.example.suruchat_app.ui
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.suruchat_app.data.local.UserPreferences
+import com.example.suruchat_app.ui.screens.add_new_chat.AddNewChatScreen
+import com.example.suruchat_app.ui.screens.chat.ChatScreen
 import com.example.suruchat_app.ui.screens.home.HomeScreen
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
 import com.example.suruchat_app.ui.screens.login.LoginScreen
@@ -19,14 +18,12 @@ import com.example.suruchat_app.ui.util.Routes
 fun AppNavigation(
     navController: NavHostController,
     viewModel: HomeViewModel,
-    userPreferences: UserPreferences,
-    innerPadding: PaddingValues
+    userPreferences: UserPreferences
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash.route,
-        modifier = Modifier.padding(innerPadding)
+        startDestination = Routes.Splash.route
     ) {
 
         composable(
@@ -45,6 +42,14 @@ fun AppNavigation(
 
         composable(Routes.SignUp.route) {
             SignupScreen(navController)
+        }
+
+        composable(Routes.AddNewChat.route){
+            AddNewChatScreen(navController)
+        }
+
+        composable(Routes.Chat.route){
+            ChatScreen(navController)
         }
     }
 }
