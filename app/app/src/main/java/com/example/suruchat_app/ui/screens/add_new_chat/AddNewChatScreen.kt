@@ -36,14 +36,14 @@ fun AddNewChatScreen(navController: NavHostController) {
         val users = remember {
             mutableStateListOf(
                 User("Gulshan Patidar", "1"),
-                User("Tanish Gupta","2"),
-                User("Vishal Kumar","3"),
-                User("Suryansh Kumar","4")
+                User("Tanish Gupta", "2"),
+                User("Vishal Kumar", "3"),
+                User("Suryansh Kumar", "4")
             )
         }
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(users){
-                NewUserOption(it){
+            items(users) {
+                NewUserOption(it) {
                     navController.navigate(Routes.Chat.route)
                 }
                 Divider()
@@ -53,13 +53,14 @@ fun AddNewChatScreen(navController: NavHostController) {
 }
 
 @Composable
-fun NewUserOption(user: User,onClickNewChat: () -> Unit) {
+fun NewUserOption(user: User, onClickNewChat: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp).clickable {
-                                     onClickNewChat()
-            },
+            .clickable {
+                onClickNewChat()
+            }
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -71,16 +72,14 @@ fun NewUserOption(user: User,onClickNewChat: () -> Unit) {
                 .padding(8.dp)
         )
         Spacer(modifier = Modifier.width(20.dp))
-        Column(modifier = Modifier.fillMaxWidth(0.8f)) {
-            Text(text = user.username, style = MaterialTheme.typography.body1)
-        }
+        Text(text = user.username, style = MaterialTheme.typography.body1)
     }
 }
 
 @Preview()
 @Composable
 fun PreviewUserOption() {
-    NewUserOption(User("Gulshan Patidar","1")){
+    NewUserOption(User("Gulshan Patidar", "1")) {
 
     }
 }

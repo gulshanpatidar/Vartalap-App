@@ -11,10 +11,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.dto.User
@@ -44,9 +46,9 @@ fun HomeScreen(
         val users = remember {
             mutableStateListOf(
                 User("Gulshan Patidar", "1"),
-                User("Tanish Gupta","2"),
-                User("Vishal Kumar","3"),
-                User("Suryansh Kumar","4")
+                User("Tanish Gupta", "2"),
+                User("Vishal Kumar", "3"),
+                User("Suryansh Kumar", "4")
             )
         }
 
@@ -62,7 +64,7 @@ fun HomeScreen(
                 LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
                     items(users) {
                         Column {
-                            UserOption(it){
+                            UserOption(it) {
                                 navController.navigate(Routes.Chat.route)
                             }
                             Divider()
@@ -75,40 +77,43 @@ fun HomeScreen(
 }
 
 @Composable
-fun UserOption(user: User,onUserClicked: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp)
-        .clickable {
-            onUserClicked()
-        }) {
+fun UserOption(user: User, onUserClicked: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onUserClicked()
+            }
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
-            imageVector = Icons.Default.Person,
+            imageVector = Icons.Filled.Person,
             contentDescription = "Sender Image",
             modifier = Modifier
-                .padding(end = 8.dp)
+                .padding(end = 16.dp)
                 .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
-                .padding(8.dp)
+                .padding(16.dp)
         )
-        Column(modifier = Modifier.fillMaxWidth(0.8f)) {
-            Text(text = user.username, style = MaterialTheme.typography.body1)
-            Text(text = "Hello buddy...", style = MaterialTheme.typography.body2)
-        }
-        Text(text = "09:00")
+        Text(text = user.username, fontSize = 24.sp)
     }
 }
 
 @Composable
 fun FabButton(onFabClicked: () -> Unit) {
-    FloatingActionButton(onClick = { onFabClicked() },elevation = FloatingActionButtonDefaults.elevation(8.dp)) {
-        Icon(imageVector = Icons.Default.Add, contentDescription = "")
+    FloatingActionButton(
+        onClick = { onFabClicked() },
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
+        modifier = Modifier.size(65.dp)
+    ) {
+        Icon(imageVector = Icons.Default.Chat, contentDescription = "",modifier = Modifier.size(40.dp))
     }
 }
 
 @Preview
 @Composable
 fun PreviewUserOption() {
-    UserOption(User("Gulshan Patidar","1")){
+    UserOption(User("Gulshan Patidar", "1")) {
 
     }
 }

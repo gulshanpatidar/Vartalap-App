@@ -1,10 +1,7 @@
 package com.example.suruchat_app.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -34,8 +31,9 @@ fun TopBar(
                 contentDescription = "",
                 //when click on menu, triggering function should call
                 modifier = Modifier
-                    .padding(start = 4.dp)
-                    .clickable(onClick = onTopButtonClicked),
+                    .clickable(onClick = onTopButtonClicked)
+                    .padding(start = 8.dp)
+                    .size(30.dp),
                 tint = Color.White
             )
         },
