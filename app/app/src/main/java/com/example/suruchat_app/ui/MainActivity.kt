@@ -44,14 +44,16 @@ class MainActivity : ComponentActivity() {
                             if (it.isNotEmpty()){
                                 GetToken.ACCESS_TOKEN = loginToken
                                 tokenChecked = true
+                                println("Token not empty - $it")
                             }
                         }
+                    }else{
+                        AppNavigation(
+                            navController = navController,
+                            viewModel = viewModel,
+                            userPreferences = userPreferences
+                        )
                     }
-                    AppNavigation(
-                        navController = navController,
-                        viewModel = viewModel,
-                        userPreferences = userPreferences
-                    )
                 }
             }
         }

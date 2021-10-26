@@ -1,16 +1,19 @@
 package com.example.suruchat_app.ui.screens.home
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
+import com.example.suruchat_app.data.remote.dto.UserChat
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-    val helloMessage = mutableStateOf("Hello world")
+    var userChats: MutableState<List<UserChat>> = mutableStateOf(ArrayList())
     private val service = ChatService.create()
 
     init {
@@ -19,7 +22,7 @@ class HomeViewModel : ViewModel() {
 
     private fun getMessage() {
         viewModelScope.launch {
-            helloMessage.value = service.getChatResponse()
+            userChats.value = service.getUserChats()
         }
     }
 

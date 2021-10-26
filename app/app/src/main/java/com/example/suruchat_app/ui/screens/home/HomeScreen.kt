@@ -18,8 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.dto.User
+import com.example.suruchat_app.data.remote.dto.UserChat
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
 
@@ -52,6 +54,8 @@ fun HomeScreen(
             )
         }
 
+        val userChats = viewModel.userChats.value
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -62,9 +66,9 @@ fun HomeScreen(
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
                 LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
-                    items(users) {
+                    items(userChats) {
                         Column {
-                            UserOption(it) {
+                            UserOption(it.username) {
                                 navController.navigate(Routes.Chat.route)
                             }
                             Divider()
@@ -77,7 +81,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun UserOption(user: User, onUserClicked: () -> Unit) {
+fun UserOption(username: String, onUserClicked: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -95,7 +99,7 @@ fun UserOption(user: User, onUserClicked: () -> Unit) {
                 .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
                 .padding(16.dp)
         )
-        Text(text = user.username, fontSize = 24.sp)
+        Text(text = username, fontSize = 24.sp)
     }
 }
 
@@ -113,7 +117,7 @@ fun FabButton(onFabClicked: () -> Unit) {
 @Preview
 @Composable
 fun PreviewUserOption() {
-    UserOption(User("Gulshan Patidar", "1")) {
+    UserOption("Gulshan Patidar") {
 
     }
 }
