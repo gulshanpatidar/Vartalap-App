@@ -11,12 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
-import com.example.suruchat_app.ui.util.Routes
-import kotlinx.coroutines.channels.ChannelResult.Companion.closed
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,15 +51,11 @@ fun ScaffoldUse(
             drawerContent = {
                 NavigationDrawer(
                     viewModel = viewModel,
-                    userPreferences = userPreferences
+                    userPreferences = userPreferences,
+                    navController = navController
                 ) {
                     coroutineScope.launch {
                         scaffoldState.drawerState.close()
-                        navController.navigate(Routes.Login.route) {
-                            popUpTo(Routes.Home.route) {
-                                inclusive = true
-                            }
-                        }
                     }
                 }
             },

@@ -11,5 +11,7 @@ data class LoginObject(
 @Serializable
 data class LoginResponse(
     val token: String,
-    val userId: String
+    val userId: String,
+    val fullname: String,
+    val imageurl: String = ""
 )

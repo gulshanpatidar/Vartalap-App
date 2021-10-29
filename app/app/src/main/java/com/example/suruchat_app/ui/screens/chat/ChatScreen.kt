@@ -1,12 +1,15 @@
 package com.example.suruchat_app.ui.screens.chat
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,20 +20,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.navigation.NavHostController
+import com.example.suruchat_app.data.local.GetToken
+import com.example.suruchat_app.data.remote.dto.Message
+import com.example.suruchat_app.data.remote.dto.SendMessageObject
 import com.example.suruchat_app.ui.components.ScaffoldUse
-import com.example.suruchat_app.ui.screens.home.Message
 
 @Composable
-fun ChatScreen(navController: NavHostController) {
-    val recievedMessages = remember {
-        mutableStateListOf(Message("api", "Hello from suruchat api"))
+fun ChatScreen(navController: NavHostController, chatId: String?) {
+
+    val viewModel = ChatViewModel(chatId!!)
+    var messages by remember {
+        viewModel.messages
     }
 
-    val sentMessages = remember {
+    val localMessages = remember {
         mutableStateListOf<Message>()
     }
 
@@ -38,16 +45,26 @@ fun ChatScreen(navController: NavHostController) {
         topBarTitle = "Chats",
         topButtonImageVector = Icons.Default.ArrowBack,
         onClickTopButton = { navController.navigateUp() }) {
-        Column(modifier = Modifier.fillMaxSize(),verticalArrangement = Arrangement.Bottom) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(ScrollState(0)),
+            verticalArrangement = Arrangement.Bottom
+        ) {
             Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
-                items(recievedMessages) {
-                    MessageCardReceiver(msg = it)
-                }
-                items(sentMessages) {
-                    Box(modifier = Modifier.padding(4.dp)){
+            Column(modifier = Modifier.fillMaxSize()) {
+                messages.forEach {
+                    if (it.senderId == GetToken.USER_ID) {
                         MessageCardSender(msg = it)
+                        Spacer(modifier = Modifier.height(3.dp))
+                    } else {
+                        MessageCardReceiver(msg = it)
+                        Spacer(modifier = Modifier.height(3.dp))
                     }
+                }
+                localMessages.forEach{
+                    MessageCardSender(msg = it)
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -57,7 +74,9 @@ fun ChatScreen(navController: NavHostController) {
             CreateMessage(message = message, onMessageFilled = {
                 message = it
             }) {
-                sentMessages.add(Message("me", message))
+                localMessages.add(Message(GetToken.USER_ID.toString(),System.currentTimeMillis(),message,""))
+                val messageObject = SendMessageObject(chatId, System.currentTimeMillis(), message)
+                viewModel.sendMessage(messageObject)
                 message = ""
             }
         }
@@ -69,7 +88,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
             shape = MaterialTheme.shapes.small,
@@ -81,7 +100,8 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
                 },
                 placeholder = {
                     Text(text = "Enter your message")
-                }
+                },
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
         }
         IconButton(
@@ -106,7 +126,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
 
 @Composable
 fun MessageCardReceiver(msg: Message) {
-    Row(modifier = Modifier.padding(8.dp)) {
+    Row(modifier = Modifier.padding(horizontal = 8.dp)) {
         Column {
             Icon(
                 imageVector = Icons.Default.Person,
@@ -122,17 +142,19 @@ fun MessageCardReceiver(msg: Message) {
         Surface(
             color = Color.Gray.copy(alpha = 0.2f),
             shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.clip(
-                RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 24.dp,
-                    bottomStart = 24.dp,
-                    bottomEnd = 24.dp
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = 24.dp,
+                        bottomStart = 24.dp,
+                        bottomEnd = 24.dp
+                    )
                 )
-            )
+                .fillMaxWidth(0.8f)
         ) {
             Text(
-                text = msg.body,
+                text = msg.text,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(16.dp)
             )
@@ -145,7 +167,7 @@ fun MessageCardSender(msg: Message) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 8.dp), horizontalArrangement = Arrangement.End
+            .padding(start = 50.dp, end = 8.dp), horizontalArrangement = Arrangement.End
     ) {
         Surface(
             color = MaterialTheme.colors.primary,
@@ -160,7 +182,7 @@ fun MessageCardSender(msg: Message) {
             )
         ) {
             Text(
-                text = msg.body,
+                text = msg.text,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(16.dp)
             )
@@ -168,10 +190,10 @@ fun MessageCardSender(msg: Message) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewMessageCard() {
-    MessageCardReceiver(
-        Message("Gulshan", "Hello World")
-    )
-}
+//@Preview
+//@Composable
+//fun PreviewMessageCard() {
+//    MessageCardReceiver(
+//        Message("Gulshan", "Hello World")
+//    )
+//}

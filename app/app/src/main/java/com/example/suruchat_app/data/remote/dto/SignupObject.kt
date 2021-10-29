@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SignupObject(
+    val fullname: String,
     val username: String,
     val email: String,
     val password: String

@@ -4,7 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserChat(
-    val username: String,
+    val fullname: String,
     val id: String,
-    val chatid: String
+    val chatid: String,
+    val imageurl: String = ""
+)
+
+@Serializable
+data class ChatResponse(
+    val users: List<UserChat>
 )

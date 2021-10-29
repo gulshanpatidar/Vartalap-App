@@ -81,6 +81,7 @@ dependencies {
     //ktor
     def ktor_version = "1.6.3"
     implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-cio:$ktor_version"
     implementation "io.ktor:ktor-client-android:$ktor_version"
     implementation "io.ktor:ktor-client-serialization:$ktor_version"
     implementation "io.ktor:ktor-client-logging:$ktor_version"
@@ -109,5 +110,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
     implementation "androidx.hilt:hilt-navigation-fragment:1.0.0"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
+    //coil
+    implementation  "io.coil-kt:coil-compose:1.3.2"
+    implementation "com.google.accompanist:accompanist-coil:0.7.0"
 
 }

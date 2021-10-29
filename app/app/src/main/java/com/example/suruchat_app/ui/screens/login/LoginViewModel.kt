@@ -3,6 +3,7 @@ package com.example.suruchat_app.ui.screens.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import androidx.navigation.NavHostController
+import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.ui.util.Routes
@@ -29,12 +30,19 @@ class LoginViewModel(
             userId.value = response.userId
             _token.value = response.token
             if (userId.value.isNotEmpty()) {
+                GetToken.ACCESS_TOKEN = _token.value
+                GetToken.USER_IMAGE = response.imageurl
+                GetToken.USER_ID = response.userId
+                GetToken.USER_NAME = response.fullname
                 userPreferences.saveUserLoginToken(_token.value!!)
-                navcontroller.navigate(Routes.Home.route) {
-                    popUpTo(Routes.Login.route) {
-                        inclusive = true
-                    }
-                }
+                userPreferences.saveUserId(response.userId)
+                userPreferences.saveUserImage(response.imageurl)
+                userPreferences.saveUserName(response.fullname)
+//                navcontroller.navigate(Routes.Home.route) {
+//                    popUpTo(Routes.Login.route) {
+//                        inclusive = true
+//                    }
+//                }
             }
         }
     }

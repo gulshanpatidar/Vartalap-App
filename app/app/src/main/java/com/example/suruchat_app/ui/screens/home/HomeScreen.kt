@@ -1,5 +1,6 @@
 package com.example.suruchat_app.ui.screens.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,29 +15,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.suruchat_app.data.local.GetToken
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.local.UserPreferences
-import com.example.suruchat_app.data.remote.dto.User
-import com.example.suruchat_app.data.remote.dto.UserChat
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
 
+@ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
     navController: NavHostController,
-    userPreferences: UserPreferences
+    userPreferences: UserPreferences,
+    homeViewModel: HomeViewModel
 ) {
 
     ScaffoldUse(
         topBarTitle = "SuruChat",
         onClickTopButton = { },
         topButtonImageVector = Icons.Default.Menu,
-        viewModel = viewModel,
+        viewModel = homeViewModel,
         userPreferences = userPreferences,
         navController = navController,
         fabButton = {
@@ -45,33 +46,39 @@ fun HomeScreen(
             }
         }
     ) {
-        val users = remember {
-            mutableStateListOf(
-                User("Gulshan Patidar", "1"),
-                User("Tanish Gupta", "2"),
-                User("Vishal Kumar", "3"),
-                User("Suryansh Kumar", "4")
-            )
+
+        homeViewModel.getMessage()
+
+        val userChats by remember {
+            homeViewModel.userChats
         }
 
-        val userChats = viewModel.userChats.value
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+        if (userChats.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Start a new chat by clicking button below.",
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
             ) {
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
-                    items(userChats) {
-                        Column {
-                            UserOption(it.username) {
-                                navController.navigate(Routes.Chat.route)
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
+                        items(userChats) {
+                            Column {
+                                UserOption(it.fullname, it.imageurl) {
+                                    navController.navigate(Routes.Chat.route + "/${it.chatid}")
+                                }
+                                Divider()
                             }
-                            Divider()
                         }
                     }
                 }
@@ -80,8 +87,9 @@ fun HomeScreen(
     }
 }
 
+@ExperimentalCoilApi
 @Composable
-fun UserOption(username: String, onUserClicked: () -> Unit) {
+fun UserOption(username: String, userImage: String, onUserClicked: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,14 +99,26 @@ fun UserOption(username: String, onUserClicked: () -> Unit) {
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.Filled.Person,
-            contentDescription = "Sender Image",
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
-                .padding(16.dp)
-        )
+        if (userImage.isNotEmpty()) {
+            val painter = rememberImagePainter(data = userImage){
+                transformations(CircleCropTransformation())
+            }
+            Image(
+                painter = painter,
+                contentDescription = "Sender Image",
+                modifier = Modifier.padding(end = 16.dp).size(60.dp).border(2.dp,Color.Gray, CircleShape)
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Filled.Person,
+                contentDescription = "Sender Image",
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(60.dp)
+                    .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
+                    .padding(16.dp)
+            )
+        }
         Text(text = username, fontSize = 24.sp)
     }
 }
@@ -110,14 +130,18 @@ fun FabButton(onFabClicked: () -> Unit) {
         elevation = FloatingActionButtonDefaults.elevation(8.dp),
         modifier = Modifier.size(65.dp)
     ) {
-        Icon(imageVector = Icons.Default.Chat, contentDescription = "",modifier = Modifier.size(40.dp))
+        Icon(
+            imageVector = Icons.Default.Chat,
+            contentDescription = "",
+            modifier = Modifier.size(40.dp)
+        )
     }
 }
 
-@Preview
-@Composable
-fun PreviewUserOption() {
-    UserOption("Gulshan Patidar") {
-
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewUserOption() {
+//    UserOption("Gulshan Patidar") {
+//
+//    }
+//}

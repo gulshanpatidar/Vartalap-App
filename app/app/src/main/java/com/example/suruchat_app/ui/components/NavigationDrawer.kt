@@ -9,17 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
-import com.example.suruchat_app.ui.util.Constants
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
 fun NavigationDrawer(
     viewModel: HomeViewModel,
     userPreferences: UserPreferences,
+    navController: NavHostController,
     closeDrawer: () -> Unit
 ) {
 
@@ -70,6 +69,18 @@ fun NavigationDrawer(
             Spacer(modifier = Modifier.height(15.dp))
         }
         Divider(Modifier.height(1.dp))
+        Text(
+            text = "Profile",
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate(Routes.Profile.route)
+                    closeDrawer()
+                }
+                .padding(12.dp),
+            fontSize = 20.sp
+        )
+        Divider(modifier = Modifier.height(1.dp))
         Text(
             text = "Log out",
             modifier = Modifier

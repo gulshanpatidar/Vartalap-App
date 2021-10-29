@@ -1,9 +1,5 @@
 package com.example.suruchat_app.ui.screens.signup
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,9 +20,9 @@ class SignupViewModel(
     val response: LiveData<String> = _response
     private val service = ChatService.create()
 
-    fun doSignup(username: String, email: String, password: String) {
+    fun doSignup(fullname: String,username: String, email: String, password: String) {
         viewModelScope.launch {
-            _response.value = service.signup(username, email, password)
+            _response.value = service.signup(fullname,username, email, password)
             if (_response.value == "User Signup Successfully") {
                 navController.navigate(Routes.Login.route) {
                     popUpTo(Routes.SignUp.route) {

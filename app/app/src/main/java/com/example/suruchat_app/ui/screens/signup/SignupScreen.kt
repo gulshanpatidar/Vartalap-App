@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.R
-import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
@@ -32,6 +31,11 @@ fun SignupScreen(navController: NavHostController) {
     var username by remember {
         mutableStateOf("")
     }
+
+    var fullname by remember {
+        mutableStateOf("")
+    }
+
     var email by remember {
         mutableStateOf("")
     }
@@ -83,6 +87,17 @@ fun SignupScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = message, color = MaterialTheme.colors.error)
             OutlinedTextField(
+                value = fullname,
+                onValueChange = {
+                    fullname = it
+                },
+                label = {
+                    Text(text = "Enter Full Name")
+                },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
+            OutlinedTextField(
                 value = username,
                 onValueChange = {
                     username = it
@@ -129,7 +144,7 @@ fun SignupScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.padding(10.dp))
             Button(
                 onClick = {
-                    viewModel.doSignup(username, email, password)
+                    viewModel.doSignup(fullname = fullname,username = username,email =  email,password =  password)
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
