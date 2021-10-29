@@ -22,7 +22,6 @@ fun ScaffoldUse(
     topButtonImageVector: ImageVector,
     onClickTopButton: () -> Unit,
     viewModel: HomeViewModel? = null,
-    userPreferences: UserPreferences? = null,
     navController: NavHostController? = null,
     fabButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit
@@ -34,7 +33,7 @@ fun ScaffoldUse(
     //use coroutine to open and close drawer
     val coroutineScope = rememberCoroutineScope()
 
-    if (viewModel != null && userPreferences != null && navController != null) {
+    if (viewModel != null && navController != null) {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
@@ -51,7 +50,6 @@ fun ScaffoldUse(
             drawerContent = {
                 NavigationDrawer(
                     viewModel = viewModel,
-                    userPreferences = userPreferences,
                     navController = navController
                 ) {
                     coroutineScope.launch {

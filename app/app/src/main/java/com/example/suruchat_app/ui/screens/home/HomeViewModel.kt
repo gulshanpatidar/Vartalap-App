@@ -11,13 +11,14 @@ import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.data.remote.dto.UserChat
 import com.example.suruchat_app.ui.util.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HomeViewModel(val navController: NavHostController) : ViewModel() {
+class HomeViewModel(val navController: NavHostController,val userPreferences: UserPreferences) : ViewModel() {
 
     var userChats: MutableState<List<UserChat>> = mutableStateOf(ArrayList())
-    val service: ChatService = ChatService.create()
+    private val service: ChatService = ChatService.create()
 
     init {
         getMessage()
@@ -26,10 +27,13 @@ class HomeViewModel(val navController: NavHostController) : ViewModel() {
     fun getMessage() {
         viewModelScope.launch {
             userChats.value = service.getUserChats()
+            if (userChats.value.isEmpty()){
+                logout()
+            }
         }
     }
 
-    fun logout(userPreferences: UserPreferences){
+    fun logout(){
         viewModelScope.launch {
             GetToken.ACCESS_TOKEN = null
             userPreferences.saveUserLoginToken("")

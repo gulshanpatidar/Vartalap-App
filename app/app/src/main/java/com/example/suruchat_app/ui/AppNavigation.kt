@@ -42,12 +42,11 @@ fun AppNavigation(
             Routes.Home.route
         ) { backStackEntry ->
 
-            val viewModelFactory = HomeViewModelFactory(navController)
+            val viewModelFactory = HomeViewModelFactory(navController,userPreferences)
             val homeViewModel = viewModel<HomeViewModel>(factory = viewModelFactory)
 
             HomeScreen(
                 navController = navController,
-                userPreferences = userPreferences,
                 homeViewModel = homeViewModel
             )
         }

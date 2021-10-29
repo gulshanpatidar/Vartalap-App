@@ -31,7 +31,6 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    userPreferences: UserPreferences,
     homeViewModel: HomeViewModel
 ) {
 
@@ -40,7 +39,6 @@ fun HomeScreen(
         onClickTopButton = { },
         topButtonImageVector = Icons.Default.Menu,
         viewModel = homeViewModel,
-        userPreferences = userPreferences,
         navController = navController,
         fabButton = {
             FabButton {

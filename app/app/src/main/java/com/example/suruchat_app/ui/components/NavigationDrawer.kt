@@ -17,7 +17,6 @@ import com.example.suruchat_app.ui.util.Routes
 @Composable
 fun NavigationDrawer(
     viewModel: HomeViewModel,
-    userPreferences: UserPreferences,
     navController: NavHostController,
     closeDrawer: () -> Unit
 ) {
@@ -33,7 +32,7 @@ fun NavigationDrawer(
             text = { Text(text = "Are you sure you want to log out",style = MaterialTheme.typography.body1) },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.logout(userPreferences)
+                    viewModel.logout()
                     closeDrawer()
                 }) {
                     Text(text = "YES")
