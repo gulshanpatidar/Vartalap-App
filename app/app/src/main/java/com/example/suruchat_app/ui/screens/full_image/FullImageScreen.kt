@@ -16,11 +16,11 @@ import com.example.suruchat_app.ui.components.ScaffoldUse
 
 @ExperimentalCoilApi
 @Composable
-fun FullImageScreen(image: String?,navController: NavHostController) {
+fun FullImageScreen(navController: NavHostController,image: String?) {
     ScaffoldUse(topBarTitle = "Profile Picture", topButtonImageVector = Icons.Default.ArrowBack, onClickTopButton = { navController.navigateUp() }) {
         Box(modifier = Modifier.fillMaxSize(),contentAlignment = Alignment.Center){
             val painter = rememberImagePainter(data = image)
-            Image(painter = painter, contentDescription = "Full size image",modifier = Modifier.fillMaxSize(0.7f))
+            Image(painter = painter, contentDescription = "Full size image")
         }
     }
 }

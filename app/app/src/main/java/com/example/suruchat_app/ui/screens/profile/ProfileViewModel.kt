@@ -14,8 +14,8 @@ class ProfileViewModel(
     private val userPreferences: UserPreferences
 ): ViewModel() {
 
-    var imageUrl: MutableState<String> = mutableStateOf("")
-    val service = ChatService.create()
+    var imageUrl: MutableState<String> = mutableStateOf(GetToken.USER_IMAGE!!)
+    private val service = ChatService.create()
 
     fun uploadImage(fileName: String, image: File){
         viewModelScope.launch {

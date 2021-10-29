@@ -23,6 +23,7 @@ import com.example.suruchat_app.ui.screens.profile.ProfileViewModel
 import com.example.suruchat_app.ui.screens.profile.ProfileViewModelFactory
 import com.example.suruchat_app.ui.screens.signup.SignupScreen
 import com.example.suruchat_app.ui.screens.splash.SplashScreen
+import com.example.suruchat_app.ui.util.ImageHolder
 import com.example.suruchat_app.ui.util.Routes
 
 @ExperimentalCoilApi
@@ -86,7 +87,7 @@ fun AppNavigation(
                 }
             )) { navBackStackEntry ->
             val image = navBackStackEntry.arguments?.getString("image")
-            FullImageScreen(image = image, navController = navController)
+            FullImageScreen(navController = navController, image = image)
         }
 
         composable(

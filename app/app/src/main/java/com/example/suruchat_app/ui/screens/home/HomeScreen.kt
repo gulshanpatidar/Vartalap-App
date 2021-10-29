@@ -24,6 +24,8 @@ import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @ExperimentalCoilApi
 @Composable
@@ -74,9 +76,12 @@ fun HomeScreen(
                     LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
                         items(userChats) {
                             Column {
-                                UserOption(it.fullname, it.imageurl) {
-                                    navController.navigate(Routes.Chat.route + "/${it.chatid}")
-                                }
+                                UserOption(it.fullname, it.imageurl, onUserClicked = {
+                                    navController.navigate(Routes.Chat.route + "/\${it.chatid}")
+                                }, onUserImageClicked = {
+                                    val image = URLEncoder.encode(it.imageurl,StandardCharsets.UTF_8.toString())
+                                    navController.navigate(Routes.FullImage.route + "/$image")
+                                })
                                 Divider()
                             }
                         }
@@ -89,7 +94,12 @@ fun HomeScreen(
 
 @ExperimentalCoilApi
 @Composable
-fun UserOption(username: String, userImage: String, onUserClicked: () -> Unit) {
+fun UserOption(
+    username: String,
+    userImage: String,
+    onUserClicked: () -> Unit,
+    onUserImageClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,13 +110,19 @@ fun UserOption(username: String, userImage: String, onUserClicked: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (userImage.isNotEmpty()) {
-            val painter = rememberImagePainter(data = userImage){
+            val painter = rememberImagePainter(data = userImage) {
                 transformations(CircleCropTransformation())
             }
             Image(
                 painter = painter,
                 contentDescription = "Sender Image",
-                modifier = Modifier.padding(end = 16.dp).size(60.dp).border(2.dp,Color.Gray, CircleShape)
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(60.dp)
+                    .border(2.dp, Color.Gray, CircleShape)
+                    .clickable {
+                        onUserImageClicked()
+                    }
             )
         } else {
             Icon(

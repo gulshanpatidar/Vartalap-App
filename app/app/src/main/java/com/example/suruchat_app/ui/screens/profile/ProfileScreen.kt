@@ -37,10 +37,13 @@ import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.components.ScaffoldUse
+import com.example.suruchat_app.ui.util.ImageHolder
 import com.example.suruchat_app.ui.util.Routes
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @ExperimentalCoilApi
 @Composable
@@ -52,6 +55,11 @@ fun ProfileScreen(
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+
+    val imageString by remember {
+        profileViewModel.imageUrl
+    }
+
     val context = LocalContext.current
     val bitmap = remember {
         mutableStateOf<Bitmap?>(null)
@@ -76,9 +84,10 @@ fun ProfileScreen(
         mutableStateOf(false)
     }
 
-    if (showFullImage){
+    if (showFullImage) {
         showFullImage = false
-        navController.navigate(Routes.FullImage.route + "/${GetToken.USER_IMAGE!!}")
+        val encodedImage = URLEncoder.encode(GetToken.USER_IMAGE, StandardCharsets.UTF_8.toString())
+        navController.navigate(Routes.FullImage.route + "/$encodedImage")
     }
 
     if (showImagePicker) {
@@ -178,11 +187,8 @@ fun ProfileScreen(
                                 CircleShape
                             )
                             .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                showFullImage = true
-                            }
                     ) {
-                        if (GetToken.USER_IMAGE!!.isEmpty()) {
+                        if (imageString.isEmpty()) {
                             Image(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "User Image",
@@ -191,13 +197,17 @@ fun ProfileScreen(
                                     .align(CenterHorizontally)
                             )
                         } else {
-                            val painter = rememberImagePainter(data = GetToken.USER_IMAGE) {
+                            val painter = rememberImagePainter(data = imageString) {
                                 transformations(CircleCropTransformation())
                             }
                             Image(
                                 painter = painter,
                                 contentDescription = "User Image",
-                                modifier = Modifier.size(300.dp)
+                                modifier = Modifier
+                                    .size(300.dp)
+                                    .clickable {
+                                        showFullImage = true
+                                    }
                             )
                         }
                     }

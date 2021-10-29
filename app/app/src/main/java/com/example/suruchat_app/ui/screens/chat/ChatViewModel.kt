@@ -14,13 +14,13 @@ class ChatViewModel(
 ) : ViewModel() {
 
     var messages: MutableState<List<Message>> = mutableStateOf(ArrayList())
-    val service = ChatService.create()
+    private val service = ChatService.create()
 
     init {
         getMessages(chatId)
     }
 
-    fun getMessages(chatId: String) {
+    private fun getMessages(chatId: String) {
         viewModelScope.launch {
             messages.value = service.getMessages(chatId)
         }
