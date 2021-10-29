@@ -3,10 +3,7 @@ package com.example.suruchat_app.ui.screens.chat
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.remote.dto.Message
@@ -30,7 +26,14 @@ import com.example.suruchat_app.data.remote.dto.SendMessageObject
 import com.example.suruchat_app.ui.components.ScaffoldUse
 
 @Composable
-fun ChatScreen(navController: NavHostController, chatId: String?) {
+fun ChatScreen(
+    navController: NavHostController,
+    chatId: String?,
+    userName: String?,
+    userImage: String?
+) {
+
+    println("Chat id is - $chatId")
 
     val viewModel = ChatViewModel(chatId!!)
     var messages by remember {
@@ -42,7 +45,7 @@ fun ChatScreen(navController: NavHostController, chatId: String?) {
     }
 
     ScaffoldUse(
-        topBarTitle = "Chats",
+        topBarTitle = userName.toString(),
         topButtonImageVector = Icons.Default.ArrowBack,
         onClickTopButton = { navController.navigateUp() }) {
         Column(
@@ -126,7 +129,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
 
 @Composable
 fun MessageCardReceiver(msg: Message) {
-    Row(modifier = Modifier.padding(horizontal = 8.dp)) {
+    Row(modifier = Modifier.padding(end = 50.dp,start = 8.dp)) {
         Column {
             Icon(
                 imageVector = Icons.Default.Person,
@@ -151,7 +154,6 @@ fun MessageCardReceiver(msg: Message) {
                         bottomEnd = 24.dp
                     )
                 )
-                .fillMaxWidth(0.8f)
         ) {
             Text(
                 text = msg.text,

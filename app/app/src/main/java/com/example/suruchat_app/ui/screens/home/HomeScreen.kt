@@ -75,7 +75,8 @@ fun HomeScreen(
                         items(userChats) {
                             Column {
                                 UserOption(it.fullname, it.imageurl, onUserClicked = {
-                                    navController.navigate(Routes.Chat.route + "/\${it.chatid}")
+                                    val image = URLEncoder.encode(it.imageurl,StandardCharsets.UTF_8.toString())
+                                    navController.navigate(Routes.Chat.route + "/${it.chatid}/${it.fullname}/${image}")
                                 }, onUserImageClicked = {
                                     val image = URLEncoder.encode(it.imageurl,StandardCharsets.UTF_8.toString())
                                     navController.navigate(Routes.FullImage.route + "/$image")

@@ -23,7 +23,6 @@ import com.example.suruchat_app.ui.screens.profile.ProfileViewModel
 import com.example.suruchat_app.ui.screens.profile.ProfileViewModelFactory
 import com.example.suruchat_app.ui.screens.signup.SignupScreen
 import com.example.suruchat_app.ui.screens.splash.SplashScreen
-import com.example.suruchat_app.ui.util.ImageHolder
 import com.example.suruchat_app.ui.util.Routes
 
 @ExperimentalCoilApi
@@ -90,17 +89,29 @@ fun AppNavigation(
         }
 
         composable(
-            Routes.Chat.route + "/{chatId}",
+            Routes.Chat.route + "/{chatId}/{userName}/{userImage}",
             arguments = listOf(
                 navArgument(
                     name = "chatId"
                 ) {
                     NavType.StringType
+                },
+                navArgument(
+                    name = "userName"
+                ){
+                    NavType.StringType
+                },
+                navArgument(
+                    name = "userImage"
+                ){
+                    NavType.StringType
                 }
             )
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getString("chatId")
-            ChatScreen(navController, chatId)
+            val userName = backStackEntry.arguments?.getString("userName")
+            val userImage = backStackEntry.arguments?.getString("userImage")
+            ChatScreen(navController, chatId,userName,userImage)
         }
     }
 }
