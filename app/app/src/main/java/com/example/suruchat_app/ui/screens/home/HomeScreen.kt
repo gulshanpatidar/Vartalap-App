@@ -10,8 +10,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +26,6 @@ import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
 import java.net.URLEncoder
@@ -53,13 +57,17 @@ fun HomeScreen(
             homeViewModel.userChats
         }
 
-        if (userChats.isEmpty()) {
+        val isLoading by remember {
+            homeViewModel.isLoading
+        }
+
+        val errorMessage by remember {
+            homeViewModel.errorMessage
+        }
+
+        if (isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Start a new chat by clicking button below.",
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(16.dp)
-                )
+                CircularProgressIndicator()
             }
         } else {
             Box(
@@ -67,25 +75,36 @@ fun HomeScreen(
                     .fillMaxSize()
                     .background(Color.White)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
-                        items(userChats) {
-                            Column {
-                                UserOption(it.fullname, it.imageurl, onUserClicked = {
-                                    val image = URLEncoder.encode(it.imageurl,StandardCharsets.UTF_8.toString())
-                                    navController.navigate(Routes.Chat.route + "/${it.chatid}/${it.fullname}/${image}")
-                                }, onUserImageClicked = {
-                                    val image = URLEncoder.encode(it.imageurl,StandardCharsets.UTF_8.toString())
-                                    navController.navigate(Routes.FullImage.route + "/$image")
-                                })
-                                Divider()
+                if (errorMessage.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
+                            items(userChats) {
+                                Column {
+                                    UserOption(it.fullname, it.imageurl, onUserClicked = {
+                                        val image = URLEncoder.encode(
+                                            it.imageurl,
+                                            StandardCharsets.UTF_8.toString()
+                                        )
+                                        navController.navigate(Routes.Chat.route + "/${it.chatid}/${it.fullname}/${image}")
+                                    }, onUserImageClicked = {
+                                        val image = URLEncoder.encode(
+                                            it.imageurl,
+                                            StandardCharsets.UTF_8.toString()
+                                        )
+                                        navController.navigate(Routes.FullImage.route + "/$image")
+                                    })
+                                    Divider()
+                                }
                             }
                         }
                     }
+                } else {
+                    Text(text = errorMessage, color = MaterialTheme.colors.error)
                 }
+
             }
         }
     }
@@ -152,11 +171,3 @@ fun FabButton(onFabClicked: () -> Unit) {
         )
     }
 }
-
-//@Preview
-//@Composable
-//fun PreviewUserOption() {
-//    UserOption("Gulshan Patidar") {
-//
-//    }
-//}

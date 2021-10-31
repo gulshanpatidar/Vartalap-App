@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.data.remote.dto.User
+import com.example.suruchat_app.data.remote.util.Resource
 import com.example.suruchat_app.ui.util.Routes
 import kotlinx.coroutines.launch
 
@@ -15,15 +16,29 @@ class AddNewChatViewModel(
 ): ViewModel() {
 
     var appUsers: MutableState<List<User>> = mutableStateOf(ArrayList())
-    val service = ChatService.create()
+    val isLoading: MutableState<Boolean> = mutableStateOf(true)
+    val errorMessage: MutableState<String> = mutableStateOf("")
+    private val service = ChatService.create()
 
     init {
         getUsers()
     }
 
-    fun getUsers(){
+    private fun getUsers(){
         viewModelScope.launch {
-            appUsers.value = service.getUsers()
+            when(val result = service.getUsers()){
+                is Resource.Success->{
+                    appUsers.value = result.data!!
+                    isLoading.value = false
+                }
+                is Resource.Error->{
+                    errorMessage.value = result.message.toString()
+                    isLoading.value = false
+                }
+                else -> {
+
+                }
+            }
         }
     }
 

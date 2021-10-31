@@ -3,6 +3,7 @@ package com.example.suruchat_app.data.remote.api
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.remote.ChatServiceImpl
 import com.example.suruchat_app.data.remote.dto.*
+import com.example.suruchat_app.data.remote.util.Resource
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.auth.*
@@ -18,13 +19,13 @@ interface ChatService {
 
     suspend fun signup(fullname: String,username: String,email: String, password: String): String
 
-    suspend fun getUserChats(): List<UserChat>
+    suspend fun getUserChats(): Resource<List<UserChat>>
 
-    suspend fun getUsers(): List<User>
+    suspend fun getUsers(): Resource<List<User>>
 
     suspend fun startChat(userId: String): String
 
-    suspend fun getMessages(chatId: String): List<Message>
+    suspend fun getMessages(chatId: String): Resource<List<Message>>
 
     suspend fun sendMessage(sendMessageObject: SendMessageObject): String
 

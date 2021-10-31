@@ -10,6 +10,7 @@ import com.example.suruchat_app.data.remote.HttpRoutes.UPLOAD_IMAGE
 import com.example.suruchat_app.data.remote.HttpRoutes.USER_CHATS
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.data.remote.dto.*
+import com.example.suruchat_app.data.remote.util.Resource
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -84,50 +85,50 @@ class ChatServiceImpl(
         return signupResponse.message
     }
 
-    override suspend fun getUserChats(): List<UserChat> {
+    override suspend fun getUserChats(): Resource<List<UserChat>> {
         val chatResponse = try {
             client.get<ChatResponse>(USER_CHATS)
         } catch (e: RedirectResponseException) {
             // 3XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ClientRequestException) {
             // 4XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ServerResponseException) {
             // 5XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            return emptyList()
+            return Resource.Error(e.message.toString())
         }
 
-        return chatResponse.users
+        return Resource.Success(chatResponse.users)
     }
 
-    override suspend fun getUsers(): List<User> {
+    override suspend fun getUsers(): Resource<List<User>> {
         val appUsers = try {
             client.get<AppUsers>(APP_USERS)
         } catch (e: RedirectResponseException) {
             // 3XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ClientRequestException) {
             // 4XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ServerResponseException) {
             // 5XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            return emptyList()
+            return Resource.Error(e.message.toString())
         }
 
-        return appUsers.users
+        return Resource.Success(appUsers.users)
     }
 
     override suspend fun startChat(userId: String): String {
@@ -156,27 +157,27 @@ class ChatServiceImpl(
         return startChatResponse.message
     }
 
-    override suspend fun getMessages(chatId: String): List<Message> {
+    override suspend fun getMessages(chatId: String): Resource<List<Message>> {
         val messageResponse = try {
             client.get<MessageResponse>("$GET_MESSAGES/$chatId")
         } catch (e: RedirectResponseException) {
             // 3XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ClientRequestException) {
             // 4XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: ServerResponseException) {
             // 5XX responses
             println("Error: ${e.response.status.description}")
-            return emptyList()
+            return Resource.Error(e.response.status.description)
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            return emptyList()
+            return Resource.Error(e.message.toString())
         }
 
-        return messageResponse.messages
+        return Resource.Success(messageResponse.messages)
     }
 
     override suspend fun sendMessage(sendMessageObject: SendMessageObject): String {

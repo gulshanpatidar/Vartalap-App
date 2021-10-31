@@ -44,43 +44,71 @@ fun ChatScreen(
         mutableStateListOf<Message>()
     }
 
+    val isLoading by remember {
+        viewModel.isLoading
+    }
+
+    val errorMessage by remember {
+        viewModel.errorMessage
+    }
+
     ScaffoldUse(
         topBarTitle = userName.toString(),
         topButtonImageVector = Icons.Default.ArrowBack,
         onClickTopButton = { navController.navigateUp() }) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(ScrollState(0)),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(modifier = Modifier.fillMaxSize()) {
-                messages.forEach {
-                    if (it.senderId == GetToken.USER_ID) {
-                        MessageCardSender(msg = it)
-                        Spacer(modifier = Modifier.height(3.dp))
-                    } else {
-                        MessageCardReceiver(msg = it)
-                        Spacer(modifier = Modifier.height(3.dp))
+
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+
+            if (errorMessage.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(ScrollState(0)),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        messages.forEach {
+                            if (it.senderId == GetToken.USER_ID) {
+                                MessageCardSender(msg = it)
+                                Spacer(modifier = Modifier.height(3.dp))
+                            } else {
+                                MessageCardReceiver(msg = it)
+                                Spacer(modifier = Modifier.height(3.dp))
+                            }
+                        }
+                        localMessages.forEach {
+                            MessageCardSender(msg = it)
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    var message by remember {
+                        mutableStateOf("")
+                    }
+                    CreateMessage(message = message, onMessageFilled = {
+                        message = it
+                    }) {
+                        localMessages.add(
+                            Message(
+                                GetToken.USER_ID.toString(),
+                                System.currentTimeMillis(),
+                                message,
+                                ""
+                            )
+                        )
+                        val messageObject =
+                            SendMessageObject(chatId, System.currentTimeMillis(), message)
+                        viewModel.sendMessage(messageObject)
+                        message = ""
                     }
                 }
-                localMessages.forEach{
-                    MessageCardSender(msg = it)
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            var message by remember {
-                mutableStateOf("")
-            }
-            CreateMessage(message = message, onMessageFilled = {
-                message = it
-            }) {
-                localMessages.add(Message(GetToken.USER_ID.toString(),System.currentTimeMillis(),message,""))
-                val messageObject = SendMessageObject(chatId, System.currentTimeMillis(), message)
-                viewModel.sendMessage(messageObject)
-                message = ""
+            } else {
+                Text(text = errorMessage, color = MaterialTheme.colors.error)
             }
         }
     }
@@ -129,7 +157,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
 
 @Composable
 fun MessageCardReceiver(msg: Message) {
-    Row(modifier = Modifier.padding(end = 50.dp,start = 8.dp)) {
+    Row(modifier = Modifier.padding(end = 50.dp, start = 8.dp)) {
         Column {
             Icon(
                 imageVector = Icons.Default.Person,

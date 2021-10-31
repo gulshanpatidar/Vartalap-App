@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
@@ -27,6 +24,7 @@ import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.remote.dto.User
 import com.example.suruchat_app.ui.components.ScaffoldUse
 
+@ExperimentalCoilApi
 @Composable
 fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatViewModel) {
 
@@ -34,26 +32,37 @@ fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatView
         topBarTitle = "Start new chat",
         topButtonImageVector = Icons.Default.ArrowBack,
         onClickTopButton = { navController.navigateUp() }) {
-        val users = remember {
-            mutableStateListOf(
-                User("Gulshan Patidar", "1"),
-                User("Tanish Gupta", "2"),
-                User("Vishal Kumar", "3"),
-                User("Suryansh Kumar", "4")
-            )
-        }
 
         val appUsers by remember {
             viewModel.appUsers
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(appUsers) {
-                NewUserOption(it) {
-                    viewModel.startChat(it.id)
-                }
-                Divider()
+        val isLoading by remember {
+            viewModel.isLoading
+        }
+
+        val errorMessage by remember {
+            viewModel.errorMessage
+        }
+
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
+        } else {
+            if (errorMessage.isEmpty()) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(appUsers) {
+                        NewUserOption(it) {
+                            viewModel.startChat(it.id)
+                        }
+                        Divider()
+                    }
+                }
+            } else {
+                Text(text = errorMessage, color = MaterialTheme.colors.error)
+            }
+
         }
     }
 }
@@ -71,13 +80,16 @@ fun NewUserOption(user: User, onClickNewChat: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (user.imageurl.isNotEmpty()) {
-            val painter = rememberImagePainter(data = user.imageurl){
+            val painter = rememberImagePainter(data = user.imageurl) {
                 transformations(CircleCropTransformation())
             }
             Image(
                 painter = painter,
                 contentDescription = "Sender Image",
-                modifier = Modifier.padding(end = 16.dp).size(60.dp).border(2.dp,Color.Gray, CircleShape)
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .size(60.dp)
+                    .border(2.dp, Color.Gray, CircleShape)
             )
         } else {
             Icon(

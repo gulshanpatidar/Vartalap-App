@@ -9,6 +9,7 @@ import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.data.remote.dto.UserChat
+import com.example.suruchat_app.data.remote.util.Resource
 import com.example.suruchat_app.ui.util.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.isActive
@@ -18,6 +19,8 @@ import javax.inject.Inject
 class HomeViewModel(val navController: NavHostController,val userPreferences: UserPreferences) : ViewModel() {
 
     var userChats: MutableState<List<UserChat>> = mutableStateOf(ArrayList())
+    var isLoading: MutableState<Boolean> = mutableStateOf(true)
+    var errorMessage: MutableState<String> = mutableStateOf("")
     private val service: ChatService = ChatService.create()
 
     init {
@@ -26,7 +29,19 @@ class HomeViewModel(val navController: NavHostController,val userPreferences: Us
 
     fun getMessage() {
         viewModelScope.launch {
-            userChats.value = service.getUserChats()
+            when(val result = service.getUserChats()){
+                is Resource.Success ->{
+                    userChats.value = result.data!!
+                    isLoading.value = false
+                }
+                is Resource.Error ->{
+                    errorMessage.value = result.message.toString()
+                    isLoading.value = false
+                }
+                else -> {
+
+                }
+            }
             if (userChats.value.isEmpty()){
                 logout()
             }
