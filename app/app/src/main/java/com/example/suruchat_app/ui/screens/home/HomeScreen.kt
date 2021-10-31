@@ -133,7 +133,7 @@ fun UserOption(
             }
             Image(
                 painter = painter,
-                contentDescription = "Sender Image",
+                contentDescription = "User Image",
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .size(60.dp)
@@ -145,7 +145,7 @@ fun UserOption(
         } else {
             Icon(
                 imageVector = Icons.Filled.Person,
-                contentDescription = "Sender Image",
+                contentDescription = "User Image",
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .size(60.dp)

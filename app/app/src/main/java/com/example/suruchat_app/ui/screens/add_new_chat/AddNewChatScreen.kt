@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.example.suruchat_app.data.remote.dto.User
+import com.example.suruchat_app.domain.models.User
 import com.example.suruchat_app.ui.components.ScaffoldUse
 
 @ExperimentalCoilApi

@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.suruchat_app.data.remote.api.ChatService
-import com.example.suruchat_app.data.remote.dto.Message
-import com.example.suruchat_app.data.remote.dto.SendMessageObject
-import com.example.suruchat_app.data.remote.util.Resource
+import com.example.suruchat_app.domain.models.Message
+import com.example.suruchat_app.domain.models.SendMessageObject
+import com.example.suruchat_app.domain.util.Resource
 import kotlinx.coroutines.launch
 
 class ChatViewModel(

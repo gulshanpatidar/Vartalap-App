@@ -8,13 +8,10 @@ import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
-import com.example.suruchat_app.data.remote.dto.UserChat
-import com.example.suruchat_app.data.remote.util.Resource
+import com.example.suruchat_app.domain.models.UserChat
+import com.example.suruchat_app.domain.util.Resource
 import com.example.suruchat_app.ui.util.Routes
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class HomeViewModel(val navController: NavHostController,val userPreferences: UserPreferences) : ViewModel() {
 

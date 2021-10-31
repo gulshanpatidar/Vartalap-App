@@ -2,8 +2,8 @@ package com.example.suruchat_app.data.remote.api
 
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.remote.ChatServiceImpl
-import com.example.suruchat_app.data.remote.dto.*
-import com.example.suruchat_app.data.remote.util.Resource
+import com.example.suruchat_app.domain.util.Resource
+import com.example.suruchat_app.domain.models.*
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.auth.*

@@ -1,12 +1,9 @@
 package com.example.suruchat_app.ui.screens.chat
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -20,9 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.local.GetToken
-import com.example.suruchat_app.data.remote.dto.Message
-import com.example.suruchat_app.data.remote.dto.SendMessageObject
+import com.example.suruchat_app.domain.models.Message
+import com.example.suruchat_app.domain.models.SendMessageObject
 import com.example.suruchat_app.ui.components.ScaffoldUse
 
 @Composable
@@ -77,7 +77,7 @@ fun ChatScreen(
                                 MessageCardSender(msg = it)
                                 Spacer(modifier = Modifier.height(3.dp))
                             } else {
-                                MessageCardReceiver(msg = it)
+                                MessageCardReceiver(msg = it,userImage!!)
                                 Spacer(modifier = Modifier.height(3.dp))
                             }
                         }
@@ -155,18 +155,32 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
     }
 }
 
+@ExperimentalCoilApi
 @Composable
-fun MessageCardReceiver(msg: Message) {
+fun MessageCardReceiver(msg: Message, userImage: String) {
     Row(modifier = Modifier.padding(end = 50.dp, start = 8.dp)) {
         Column {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Sender Image",
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
-                    .padding(8.dp)
-            )
+            if (userImage.isNotEmpty()) {
+                val painter = rememberImagePainter(data = userImage) {
+                    transformations(CircleCropTransformation())
+                }
+                Image(
+                    painter = painter,
+                    contentDescription = "User Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(2.dp, Color.Gray, CircleShape)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = "User Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
+                        .padding(16.dp)
+                )
+            }
             Text(text = "09:00", fontSize = 12.sp)
         }
         Spacer(modifier = Modifier.width(4.dp))
@@ -224,6 +238,7 @@ fun MessageCardSender(msg: Message) {
 //@Composable
 //fun PreviewMessageCard() {
 //    MessageCardReceiver(
-//        Message("Gulshan", "Hello World")
+//        Message("0", 3254873254,"Hello buddy","ewbewid"),
+//        ""
 //    )
 //}

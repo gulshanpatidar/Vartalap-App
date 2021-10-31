@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.remote.api.ChatService
-import com.example.suruchat_app.data.remote.dto.User
-import com.example.suruchat_app.data.remote.util.Resource
-import com.example.suruchat_app.ui.util.Routes
+import com.example.suruchat_app.domain.models.User
+import com.example.suruchat_app.domain.util.Resource
 import kotlinx.coroutines.launch
 
 class AddNewChatViewModel(

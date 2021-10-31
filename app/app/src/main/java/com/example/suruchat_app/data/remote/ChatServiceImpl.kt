@@ -9,8 +9,8 @@ import com.example.suruchat_app.data.remote.HttpRoutes.START_CHAT
 import com.example.suruchat_app.data.remote.HttpRoutes.UPLOAD_IMAGE
 import com.example.suruchat_app.data.remote.HttpRoutes.USER_CHATS
 import com.example.suruchat_app.data.remote.api.ChatService
-import com.example.suruchat_app.data.remote.dto.*
-import com.example.suruchat_app.data.remote.util.Resource
+import com.example.suruchat_app.domain.util.Resource
+import com.example.suruchat_app.domain.models.*
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
