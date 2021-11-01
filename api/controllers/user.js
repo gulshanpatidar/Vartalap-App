@@ -18,7 +18,8 @@ exports.getUserChats = async (req,res,next) => {
                fullname : chatteduser.fullname,
                id : chatteduser._id,
                chatid : userchatsId[i],
-               imageurl : chatteduser.imageurl
+               imageurl : chatteduser.imageurl,
+               pubkey: chatteduser.pubkey
            })
         }
 
