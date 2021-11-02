@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var chatUseCases: ChatUseCases
     var isInternetAvailable : Boolean = false
 
+    @ExperimentalMaterialApi
     @ExperimentalCoilApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,12 +97,40 @@ class MainActivity : ComponentActivity() {
                     }
                 } else {
                     isInternetAvailable = false
-                    AppNavigation(
-                        isInternetAvailable = isInternetAvailable,
-                        navController = navController,
-                        userPreferences = userPreferences,
-                        chatUseCases = chatUseCases
-                    )
+
+                    val mainViewModel = MainViewModel(userPreferences = userPreferences)
+                    var tokenChecked by remember {
+                        mutableStateOf(false)
+                    }
+
+                    val loginToken by mainViewModel.token.observeAsState()
+                    val userId by mainViewModel.userId.observeAsState()
+                    val userImage by mainViewModel.userImage.observeAsState()
+                    val userName by mainViewModel.userName.observeAsState()
+                    val privateKey by mainViewModel.privateKey.observeAsState()
+                    val loginTime by mainViewModel.loginTime.observeAsState()
+
+                    if (!tokenChecked) {
+                        loginToken?.let {
+                            if (it.isNotEmpty()) {
+                                GetToken.ACCESS_TOKEN = loginToken
+                                GetToken.USER_ID = userId
+                                GetToken.USER_IMAGE = userImage
+                                GetToken.USER_NAME = userName
+                                GetToken.PRIVATE_KEY = privateKey
+                                GetToken.LOGIN_TIME = loginTime
+                                println("Token not empty - $it and private key - $privateKey")
+                            }
+                            tokenChecked = true
+                        }
+                    } else {
+                        AppNavigation(
+                            isInternetAvailable = isInternetAvailable,
+                            navController = navController,
+                            userPreferences = userPreferences,
+                            chatUseCases = chatUseCases
+                        )
+                    }
 //                    NetworkError()
                 }
 

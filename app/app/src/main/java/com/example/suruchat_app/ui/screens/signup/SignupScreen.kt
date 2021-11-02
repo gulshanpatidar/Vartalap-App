@@ -86,7 +86,7 @@ fun SignupScreen(navController: NavHostController,userPreferences: UserPreferenc
                 )
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = message, color = MaterialTheme.colors.error)
+            Text(text = message, color = if (message=="User Signup Successfully") Color.Green else MaterialTheme.colors.error)
             OutlinedTextField(
                 value = fullname,
                 onValueChange = {

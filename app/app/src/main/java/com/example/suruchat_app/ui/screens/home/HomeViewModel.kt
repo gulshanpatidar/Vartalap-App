@@ -27,6 +27,10 @@ class HomeViewModel(val isInternetAvailable: Boolean,val navController: NavHostC
     private var getUserChatsJob: Job? = null
 
     init {
+        getMessageInit()
+    }
+
+    fun getMessageInit(){
         if (isInternetAvailable){
             getOfflineUserChatsThenOnline()
         }else{

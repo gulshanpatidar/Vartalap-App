@@ -1,5 +1,6 @@
 package com.example.suruchat_app.ui
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -28,6 +29,7 @@ import com.example.suruchat_app.ui.screens.signup.SignupScreen
 import com.example.suruchat_app.ui.screens.splash.SplashScreen
 import com.example.suruchat_app.ui.util.Routes
 
+@ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
 fun AppNavigation(
@@ -69,7 +71,7 @@ fun AppNavigation(
 
         composable(Routes.AddNewChat.route) {
 
-            val viewModelFactory = AddNewChatViewModelFactory(navController)
+            val viewModelFactory = AddNewChatViewModelFactory(navController,isInternetAvailable,chatUseCases)
             val addNewChatViewModel = viewModel<AddNewChatViewModel>(factory = viewModelFactory)
 
             AddNewChatScreen(navController, addNewChatViewModel)

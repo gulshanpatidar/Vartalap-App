@@ -25,7 +25,10 @@ import com.example.suruchat_app.domain.models.Message
 import com.example.suruchat_app.domain.models.SendMessageObject
 import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.ui.components.ScaffoldUse
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+@ExperimentalMaterialApi
 @Composable
 fun ChatScreen(
     navController: NavHostController,
@@ -34,6 +37,8 @@ fun ChatScreen(
     userImage: String?,
     viewModel: ChatViewModel
 ) {
+
+    viewModel.getMessagesInit()
 
     println("Chat id is - $chatId")
     var messages by remember {
@@ -52,6 +57,8 @@ fun ChatScreen(
         viewModel.errorMessage
     }
 
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+
     ScaffoldUse(
         topBarTitle = userName.toString(),
         topButtonImageVector = Icons.Default.ArrowBack,
@@ -64,47 +71,50 @@ fun ChatScreen(
         } else {
 
             if (errorMessage.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(ScrollState(0)),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        messages.forEach {
-                            if (it.senderId == GetToken.USER_ID) {
+
+                SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing), onRefresh = { viewModel.refresh() }) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(ScrollState(0)),
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            messages.forEach {
+                                if (it.senderId == GetToken.USER_ID) {
+                                    MessageCardSender(msg = it)
+                                    Spacer(modifier = Modifier.height(3.dp))
+                                } else {
+                                    MessageCardReceiver(msg = it,userImage!!)
+                                    Spacer(modifier = Modifier.height(3.dp))
+                                }
+                            }
+                            localMessages.forEach {
                                 MessageCardSender(msg = it)
-                                Spacer(modifier = Modifier.height(3.dp))
-                            } else {
-                                MessageCardReceiver(msg = it,userImage!!)
-                                Spacer(modifier = Modifier.height(3.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
                             }
                         }
-                        localMessages.forEach {
-                            MessageCardSender(msg = it)
-                            Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
+                        var message by remember {
+                            mutableStateOf("")
                         }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    var message by remember {
-                        mutableStateOf("")
-                    }
-                    CreateMessage(message = message, onMessageFilled = {
-                        message = it
-                    }) {
-                        localMessages.add(
-                            Message(
-                                _id = "",
-                                senderId = GetToken.USER_ID!!,
-                                createdAt = System.currentTimeMillis(),
-                                text = message
+                        CreateMessage(message = message, onMessageFilled = {
+                            message = it
+                        }) {
+                            localMessages.add(
+                                Message(
+                                    _id = "",
+                                    senderId = GetToken.USER_ID!!,
+                                    createdAt = System.currentTimeMillis(),
+                                    text = message
+                                )
                             )
-                        )
-                        val messageObject =
-                            SendMessageObject(chatId!!, System.currentTimeMillis(), message)
-                        viewModel.sendMessage(messageObject)
-                        message = ""
+                            val messageObject =
+                                SendMessageObject(chatId!!, System.currentTimeMillis(), message)
+                            viewModel.sendMessage(messageObject)
+                            message = ""
+                        }
                     }
                 }
             } else {

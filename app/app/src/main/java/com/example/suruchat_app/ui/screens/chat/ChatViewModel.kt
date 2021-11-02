@@ -3,6 +3,8 @@ package com.example.suruchat_app.ui.screens.chat
 import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +16,7 @@ import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.domain.util.Resource
 import com.example.suruchat_app.security.Curve25519Impl
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
@@ -33,16 +34,33 @@ class ChatViewModel(
     private val publicKey: String = GetToken.PUBLIC_KEY
     private val publicKeyBytes: ByteArray = Base64.decode(publicKey, Base64.DEFAULT)
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var getMessagesJob: Job? = null
 
     init {
-//        println("Public key - $publicKey")
-//        if (isInternetAvailable) {
-//            getMessagesOfflineThenOnline(chatId)
-//        } else {
-//            getMessagesOffline(chatId)
-//        }
-        getMessages(chatId)
+//        getMessagesInit()
+//        getMessages(chatId)
+        getMessagesInit()
+    }
+
+    fun getMessagesInit(){
+        println("Public key - $publicKey")
+        if (isInternetAvailable) {
+            getMessagesOfflineThenOnline(chatId)
+        } else {
+            getMessagesOffline(chatId)
+        }
+    }
+
+    fun refresh(){
+        if (isInternetAvailable){
+            viewModelScope.launch {
+                _isRefreshing.emit(true)
+                getMessages(chatId)
+            }
+        }
     }
 
     fun getMessagesOffline(chatId: String) {
@@ -58,19 +76,14 @@ class ChatViewModel(
             messages.value.forEach {
                 Log.i("Testing", "getMessagesOfflineThenOnline: Message is - ${it.text}")
             }
-            isLoading.value = false
+            getMessages(chatId)
         }
-        getMessages(chatId)
     }
 
     private fun getMessages(chatId: String) {
         viewModelScope.launch {
             when (val result = service.getMessages(chatId)) {
                 is Resource.Success -> {
-//                    val loadedMessages = result.data!!
-//                    loadedMessages.forEach {
-//                        it.chatId = chatId
-//                        chatUseCases.addMessage(it)
 //                    }
                     val loadedMessages = result.data!!
 
@@ -79,8 +92,8 @@ class ChatViewModel(
                             val decryptedMessage =
                                 Curve25519Impl.decryptMessage(publicKeyBytes, privateKeyBytes, it.text)
                             it.text = decryptedMessage
-//                            it.chatId = chatId
-//                            chatUseCases.addMessage(it)
+                            it.chatId = chatId
+                            chatUseCases.addMessage(it)
                         }
                     }
                     messages.value = loadedMessages
@@ -94,6 +107,7 @@ class ChatViewModel(
 
                 }
             }
+            _isRefreshing.emit(false)
         }
     }
 

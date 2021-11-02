@@ -39,7 +39,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel
 ) {
 
-    homeViewModel.getUserChats()
+    homeViewModel.getMessageInit()
 
     ScaffoldUse(
         topBarTitle = "SuruChat",
