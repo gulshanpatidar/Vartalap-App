@@ -16,6 +16,10 @@ class MainViewModel(
     var userImage: LiveData<String> = _userImage
     private var _userName = MutableLiveData<String>()
     var userName: LiveData<String> = _userName
+    private var _privateKey = MutableLiveData<String>()
+    var privateKey: LiveData<String> = _privateKey
+    private var _loginTime = MutableLiveData<Long>()
+    var loginTime: LiveData<Long> = _loginTime
 
     init {
         getUserInfo()
@@ -27,6 +31,8 @@ class MainViewModel(
             userId = userPreferences.userId.asLiveData()
             userImage = userPreferences.userImage.asLiveData()
             userName = userPreferences.userName.asLiveData()
+            privateKey = userPreferences.privateKey.asLiveData()
+            loginTime = userPreferences.loginTime.asLiveData()
         }
     }
 }

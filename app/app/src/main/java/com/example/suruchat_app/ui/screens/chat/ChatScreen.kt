@@ -23,6 +23,7 @@ import coil.transform.CircleCropTransformation
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.domain.models.Message
 import com.example.suruchat_app.domain.models.SendMessageObject
+import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.ui.components.ScaffoldUse
 
 @Composable
@@ -30,12 +31,11 @@ fun ChatScreen(
     navController: NavHostController,
     chatId: String?,
     userName: String?,
-    userImage: String?
+    userImage: String?,
+    viewModel: ChatViewModel
 ) {
 
     println("Chat id is - $chatId")
-
-    val viewModel = ChatViewModel(chatId!!)
     var messages by remember {
         viewModel.messages
     }
@@ -95,14 +95,14 @@ fun ChatScreen(
                     }) {
                         localMessages.add(
                             Message(
-                                GetToken.USER_ID.toString(),
-                                System.currentTimeMillis(),
-                                message,
-                                ""
+                                _id = "",
+                                senderId = GetToken.USER_ID!!,
+                                createdAt = System.currentTimeMillis(),
+                                text = message
                             )
                         )
                         val messageObject =
-                            SendMessageObject(chatId, System.currentTimeMillis(), message)
+                            SendMessageObject(chatId!!, System.currentTimeMillis(), message)
                         viewModel.sendMessage(messageObject)
                         message = ""
                     }
@@ -160,7 +160,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
 fun MessageCardReceiver(msg: Message, userImage: String) {
     Row(modifier = Modifier.padding(end = 50.dp, start = 8.dp)) {
         Column {
-            if (userImage.isNotEmpty()) {
+            if (userImage!="image") {
                 val painter = rememberImagePainter(data = userImage) {
                     transformations(CircleCropTransformation())
                 }

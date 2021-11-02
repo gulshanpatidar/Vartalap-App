@@ -2,6 +2,7 @@ package com.example.suruchat_app.domain.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import java.lang.Exception
@@ -10,9 +11,10 @@ import java.lang.Exception
 @Serializable
 data class UserChat(
     @ColumnInfo(name = "full_name") val fullname: String,
-    @PrimaryKey val id: String,
-    @ColumnInfo(name = "chat_id") val chatid: String,
-    @ColumnInfo(name = "image_url") val imageurl: String = ""
+    @ColumnInfo(name = "user_id") val id: String,
+    @PrimaryKey @ColumnInfo(name = "chat_id") val chatid: String,
+    @ColumnInfo(name = "image_url") val imageurl: String = "",
+    val pubkey: String
 )
 
 @Serializable

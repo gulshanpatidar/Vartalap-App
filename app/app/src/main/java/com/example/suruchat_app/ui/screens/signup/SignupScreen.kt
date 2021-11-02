@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.R
+import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.util.Routes
 
 @Composable
-fun SignupScreen(navController: NavHostController) {
+fun SignupScreen(navController: NavHostController,userPreferences: UserPreferences) {
     var username by remember {
         mutableStateOf("")
     }
@@ -44,7 +45,7 @@ fun SignupScreen(navController: NavHostController) {
     }
     var passwordVisibility = remember { mutableStateOf(false) }
 
-    val viewModel = SignupViewModel(navController = navController)
+    val viewModel = SignupViewModel(navController = navController,userPreferences = userPreferences)
 
     val message by viewModel.response.observeAsState("")
 

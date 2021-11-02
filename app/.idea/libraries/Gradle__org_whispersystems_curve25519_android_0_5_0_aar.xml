@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.whispersystems:curve25519-android:0.5.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c609e0c0883ec1b0b283c59556e8d2cb/transformed/jetified-curve25519-android-0.5.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c609e0c0883ec1b0b283c59556e8d2cb/transformed/jetified-curve25519-android-0.5.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c609e0c0883ec1b0b283c59556e8d2cb/transformed/jetified-curve25519-android-0.5.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

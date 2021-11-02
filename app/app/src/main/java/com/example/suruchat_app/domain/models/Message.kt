@@ -1,25 +1,40 @@
 package com.example.suruchat_app.domain.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import kotlinx.serialization.Serializable
 import java.lang.Exception
 
-@Entity(tableName = "message")
+@Entity(tableName = "message",
+foreignKeys = [ForeignKey(
+    entity = UserChat::class,
+    parentColumns = arrayOf("chat_id"),
+    childColumns = arrayOf("chat_id"),
+    onDelete = ForeignKey.CASCADE
+)])
 @Serializable
 data class Message(
+    @PrimaryKey val _id: String,
     @ColumnInfo(name = "sender_id") val senderId: String,
     @ColumnInfo(name = "created_at") val createdAt: Long,
-    @ColumnInfo(name = "text") val text: String,
-    @PrimaryKey val _id: String
+    @ColumnInfo(name = "text") var text: String,
+    @ColumnInfo(name = "chat_id") var chatId: String = ""
+)
+
+@Entity
+data class UserChatWithMessage(
+    @Embedded val userChat: UserChat,
+    @Relation(
+        parentColumn = "chat_id",
+        entityColumn = "chat_id"
+    )
+    val messages: List<Message>
 )
 
 @Serializable
 data class SendMessageObject(
     val chatId: String,
     val createdAt: Long,
-    val text: String
+    var text: String
 )
 
 @Serializable

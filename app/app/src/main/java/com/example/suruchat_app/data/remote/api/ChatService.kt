@@ -12,10 +12,11 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import java.io.File
+import java.security.PublicKey
 
 interface ChatService {
 
-    suspend fun login(username: String,password: String): LoginResponse
+    suspend fun login(username: String,password: String,publicKey: String): LoginResponse
 
     suspend fun signup(fullname: String,username: String,email: String, password: String): String
 
