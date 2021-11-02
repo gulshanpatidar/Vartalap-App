@@ -16,13 +16,14 @@ exports.userSignup = async (req,res,next) => {
     const email = req.body.email;
     const fullname = req.body.fullname;
     const password = req.body.password;
+
     try {
         const hashedPw = await bcrypt.hash(password, 12);
         const user = new  User({
             username:username,
             fullname : fullname,
             email:email,
-            password:hashedPw,
+            password:hashedPw
         })
        await user.save();
 
@@ -41,6 +42,7 @@ exports.userSignup = async (req,res,next) => {
 exports.userLogin = async (req,res,next) => {
  const username = req.body.username;
  const password = req.body.password;
+ const pubkey = req.body.pubkey;
  let loadedUser;
  try {
  const user = await User.findOne({username:username});
@@ -61,10 +63,10 @@ exports.userLogin = async (req,res,next) => {
      email: loadedUser.email,
      userId: loadedUser._id.toString()
    },
-   'Suruchatd5be0d441d557f372d9bb81a193be014a6e6c90065bcdcSecret',
-   { expiresIn: '23h' }
+   'Suruchatd5be0d441d557f372d9bb81a193be014a6e6c90065bcdcSecret'
  );
-
+ user.pubkey = pubkey;
+ await user.save();
  res.status(200).json({ token: token, userId: loadedUser._id.toString(),fullname : loadedUser.fullname,imageurl : loadedUser.imageurl});
  } catch (err) {
     if(! err.statusCode) {

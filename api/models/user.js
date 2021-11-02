@@ -18,6 +18,10 @@ const userSchema = new Schema({
        type : String,
        default : ""
     },
+    pubkey: { 
+      type : String,
+      default : ""
+    },
     password:{
         type:String,
         require:true
