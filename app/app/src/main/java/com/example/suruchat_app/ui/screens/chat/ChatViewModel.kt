@@ -37,15 +37,11 @@ class ChatViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private var getMessagesJob: Job? = null
-
     init {
-//        getMessagesInit()
-//        getMessages(chatId)
         getMessagesInit()
     }
 
-    fun getMessagesInit(){
+    fun getMessagesInit() {
         println("Public key - $publicKey")
         if (isInternetAvailable) {
             getMessagesOfflineThenOnline(chatId)
@@ -54,8 +50,8 @@ class ChatViewModel(
         }
     }
 
-    fun refresh(){
-        if (isInternetAvailable){
+    fun refresh() {
+        if (isInternetAvailable) {
             viewModelScope.launch {
                 _isRefreshing.emit(true)
                 getMessages(chatId)
@@ -63,19 +59,20 @@ class ChatViewModel(
         }
     }
 
-    fun getMessagesOffline(chatId: String) {
+    private fun getMessagesOffline(chatId: String) {
         viewModelScope.launch {
             messages.value = chatUseCases.getMessages(chatId).messages
             isLoading.value = false
         }
     }
 
-    fun getMessagesOfflineThenOnline(chatId: String) {
+    private fun getMessagesOfflineThenOnline(chatId: String) {
         viewModelScope.launch {
             messages.value = chatUseCases.getMessages(chatId).messages
             messages.value.forEach {
                 Log.i("Testing", "getMessagesOfflineThenOnline: Message is - ${it.text}")
             }
+            isLoading.value = false
             getMessages(chatId)
         }
     }
@@ -84,13 +81,16 @@ class ChatViewModel(
         viewModelScope.launch {
             when (val result = service.getMessages(chatId)) {
                 is Resource.Success -> {
-//                    }
                     val loadedMessages = result.data!!
 
                     loadedMessages.forEach {
-                        if (GetToken.LOGIN_TIME!!<it.createdAt){
+                        if (GetToken.LOGIN_TIME!! < it.createdAt) {
                             val decryptedMessage =
-                                Curve25519Impl.decryptMessage(publicKeyBytes, privateKeyBytes, it.text)
+                                Curve25519Impl.decryptMessage(
+                                    publicKeyBytes,
+                                    privateKeyBytes,
+                                    it.text
+                                )
                             it.text = decryptedMessage
                             it.chatId = chatId
                             chatUseCases.addMessage(it)

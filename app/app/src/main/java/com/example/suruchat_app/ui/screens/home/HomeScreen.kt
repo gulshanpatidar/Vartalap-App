@@ -165,7 +165,10 @@ fun UserOption(
                     .padding(16.dp)
             )
         }
-        Text(text = username, fontSize = 24.sp)
+        Column {
+            Text(text = username, fontSize = 24.sp)
+            Text(text = username, fontSize = 16.sp)
+        }
     }
 }
 

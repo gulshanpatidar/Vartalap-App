@@ -39,6 +39,7 @@ import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.ImageHolder
 import com.example.suruchat_app.ui.util.Routes
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -63,6 +64,11 @@ fun ProfileScreen(
     val context = LocalContext.current
     val bitmap = remember {
         mutableStateOf<Bitmap?>(null)
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember {
+        SnackbarHostState()
     }
 
     val contentResolver = LocalContext.current.contentResolver
@@ -218,8 +224,14 @@ fun ProfileScreen(
                             .padding(8.dp)
                             .align(CenterHorizontally)
                             .clickable {
-                                showImagePicker = true
-                                launcher.launch("image/*")
+                                if (profileViewModel.isInternetAvailable){
+                                    showImagePicker = true
+                                    launcher.launch("image/*")
+                                }else{
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("cannot update profile while offline.")
+                                    }
+                                }
                             },
                         fontSize = 20.sp,
                         color = Color.Blue.copy(alpha = 0.6f)
@@ -232,6 +244,7 @@ fun ProfileScreen(
                             .align(CenterHorizontally),
                         fontSize = 20.sp
                     )
+                    SnackbarHost(hostState = snackbarHostState)
                 }
             }
         }

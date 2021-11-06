@@ -79,7 +79,7 @@ fun AppNavigation(
 
         composable(Routes.Profile.route) {
 
-            val viewModelFactory = ProfileViewModelFactory(userPreferences)
+            val viewModelFactory = ProfileViewModelFactory(userPreferences,isInternetAvailable)
             val profileViewModel = viewModel<ProfileViewModel>(factory = viewModelFactory)
             ProfileScreen(navController = navController, profileViewModel)
         }

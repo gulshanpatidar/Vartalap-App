@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -14,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -27,6 +30,7 @@ import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
@@ -57,6 +61,11 @@ fun ChatScreen(
         viewModel.errorMessage
     }
 
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     ScaffoldUse(
@@ -72,13 +81,16 @@ fun ChatScreen(
 
             if (errorMessage.isEmpty()) {
 
-                SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing), onRefresh = { viewModel.refresh() }) {
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                    onRefresh = { viewModel.refresh() }) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(ScrollState(0)),
                         verticalArrangement = Arrangement.Bottom
                     ) {
+                        SnackbarHost(hostState = snackbarHostState)
                         Spacer(modifier = Modifier.height(10.dp))
                         Column(modifier = Modifier.fillMaxSize()) {
                             messages.forEach {
@@ -86,7 +98,7 @@ fun ChatScreen(
                                     MessageCardSender(msg = it)
                                     Spacer(modifier = Modifier.height(3.dp))
                                 } else {
-                                    MessageCardReceiver(msg = it,userImage!!)
+                                    MessageCardReceiver(msg = it, userImage!!)
                                     Spacer(modifier = Modifier.height(3.dp))
                                 }
                             }
@@ -102,18 +114,26 @@ fun ChatScreen(
                         CreateMessage(message = message, onMessageFilled = {
                             message = it
                         }) {
-                            localMessages.add(
-                                Message(
-                                    _id = "",
-                                    senderId = GetToken.USER_ID!!,
-                                    createdAt = System.currentTimeMillis(),
-                                    text = message
-                                )
-                            )
-                            val messageObject =
-                                SendMessageObject(chatId!!, System.currentTimeMillis(), message)
-                            viewModel.sendMessage(messageObject)
-                            message = ""
+                            if (message.isNotEmpty()){
+                                if (viewModel.isInternetAvailable){
+                                    localMessages.add(
+                                        Message(
+                                            _id = "",
+                                            senderId = GetToken.USER_ID!!,
+                                            createdAt = System.currentTimeMillis(),
+                                            text = message
+                                        )
+                                    )
+                                    val messageObject =
+                                        SendMessageObject(chatId!!, System.currentTimeMillis(), message)
+                                    viewModel.sendMessage(messageObject)
+                                    message = ""
+                                }else{
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Cannot send message while offline.")
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -142,7 +162,8 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
                 placeholder = {
                     Text(text = "Enter your message")
                 },
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier.fillMaxWidth(0.8f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,imeAction = ImeAction.Send)
             )
         }
         IconButton(
@@ -170,7 +191,7 @@ fun CreateMessage(message: String, onMessageFilled: (String) -> Unit, onButtonCl
 fun MessageCardReceiver(msg: Message, userImage: String) {
     Row(modifier = Modifier.padding(end = 50.dp, start = 8.dp)) {
         Column {
-            if (userImage!="image") {
+            if (userImage != "image") {
                 val painter = rememberImagePainter(data = userImage) {
                     transformations(CircleCropTransformation())
                 }

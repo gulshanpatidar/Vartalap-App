@@ -28,15 +28,19 @@ class AddNewChatViewModel(
     private var getUsersJob: Job? = null
 
     init {
-//        if (isInternetAvailable){
-//            getOfflineThenOnlineUsers()
-//        }else{
-//            getOfflineUsers()
-//        }
-        getUsers()
+//        getUsers()
+        getUsersInit()
     }
 
-    fun getOfflineUsers() {
+    private fun getUsersInit() {
+        if (isInternetAvailable) {
+            getOfflineThenOnlineUsers()
+        } else {
+            getOfflineUsers()
+        }
+    }
+
+    private fun getOfflineUsers() {
         getUsersJob?.cancel()
         getUsersJob = chatUseCases.getUsers()
             .onEach {
@@ -46,7 +50,7 @@ class AddNewChatViewModel(
         isLoading.value = false
     }
 
-    fun getOfflineThenOnlineUsers() {
+    private fun getOfflineThenOnlineUsers() {
         getUsersJob?.cancel()
         getUsersJob = chatUseCases.getUsers()
             .onEach {
@@ -61,10 +65,11 @@ class AddNewChatViewModel(
         viewModelScope.launch {
             when (val result = service.getUsers()) {
                 is Resource.Success -> {
-                    appUsers.value = result.data!!
-//                    loadedUsers.forEach {
-//                        chatUseCases.addUser(it)
-//                    }
+                    val loadedUsers = result.data!!
+                    loadedUsers.forEach {
+                        chatUseCases.addUser(it)
+                    }
+                    appUsers.value = loadedUsers
                     isLoading.value = false
                 }
                 is Resource.Error -> {
@@ -78,18 +83,21 @@ class AddNewChatViewModel(
         }
     }
 
-    fun searchUser(username: String){
+    fun searchUser(username: String) {
 //        appUsers.value.forEach {
 //            if ()
 //        }
     }
 
-    fun startChat(userId: String) {
-        viewModelScope.launch {
-//            if (isInternetAvailable){
-            service.startChat(userId = userId)
-            navController.navigateUp()
-//            }
+    fun startChat(user: User) {
+        if (isInternetAvailable) {
+            viewModelScope.launch {
+                service.startChat(userId = user.id)
+                chatUseCases.deleteUser(user = user)
+                navController.navigateUp()
+            }
+        } else {
+            //can't start new chat without connecting to database.
         }
     }
 }

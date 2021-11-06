@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class ProfileViewModel(
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    val isInternetAvailable: Boolean
 ): ViewModel() {
 
     var imageUrl: MutableState<String> = mutableStateOf(GetToken.USER_IMAGE!!)
