@@ -57,7 +57,7 @@ fun NavigationDrawer(
         ) {
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "SuruChat",
+                text = "Vartalap",
                 fontSize = 30.sp,
                 modifier = Modifier
                     .padding(16.dp)
