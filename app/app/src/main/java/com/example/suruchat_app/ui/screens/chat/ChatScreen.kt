@@ -378,7 +378,7 @@ fun MessageCardReceiver(msg: Message, userImage: String, navController: NavHostC
                 )
             }
             val date = Date(msg.createdAt)
-            val formatter = SimpleDateFormat("mm:HH")
+            val formatter = SimpleDateFormat("HH:mm")
             val dateString = formatter.format(date)
             Text(text = dateString, fontSize = 12.sp)
         }
@@ -403,13 +403,13 @@ fun MessageCardReceiver(msg: Message, userImage: String, navController: NavHostC
                     modifier = Modifier.padding(16.dp)
                 )
             } else {
-                val painter = rememberImagePainter(data = GetToken.USER_IMAGE)
+                val painter = rememberImagePainter(data = msg.image)
                 Image(painter = painter, contentDescription = "Sent Image",
                     Modifier
                         .size(200.dp)
                         .clickable {
                             val encodedImage = URLEncoder.encode(
-                                GetToken.USER_IMAGE,
+                                msg.image,
                                 StandardCharsets.UTF_8.toString()
                             )
                             navController.navigate(Routes.FullImage.route + "/$encodedImage")
