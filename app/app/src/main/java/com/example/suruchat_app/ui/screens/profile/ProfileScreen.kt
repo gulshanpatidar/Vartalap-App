@@ -57,6 +57,10 @@ fun ProfileScreen(
         mutableStateOf<Uri?>(null)
     }
 
+    var fullname by remember {
+        mutableStateOf(GetToken.USER_NAME)
+    }
+
     val imageString by remember {
         profileViewModel.imageUrl
     }
@@ -224,10 +228,10 @@ fun ProfileScreen(
                             .padding(8.dp)
                             .align(CenterHorizontally)
                             .clickable {
-                                if (profileViewModel.isInternetAvailable){
+                                if (profileViewModel.isInternetAvailable) {
                                     showImagePicker = true
                                     launcher.launch("image/*")
-                                }else{
+                                } else {
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar("cannot update profile while offline.")
                                     }
@@ -237,13 +241,34 @@ fun ProfileScreen(
                         color = Color.Blue.copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "Full Name - ${GetToken.USER_NAME}",
-                        Modifier
+                    TextField(
+                        value = fullname.toString(),
+                        onValueChange = {
+                            fullname = it
+                        },
+                        label = {
+                            Text(text = "Full name")
+                        },
+                        modifier = Modifier
                             .padding(8.dp)
-                            .align(CenterHorizontally),
-                        fontSize = 20.sp
+                            .align(CenterHorizontally)
                     )
+                    Button(onClick = {
+                        if (fullname.toString().isNotEmpty()) {
+                            if (profileViewModel.isInternetAvailable){
+                                profileViewModel.updateProfile(fullname.toString())
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Full name updated!")
+                                }
+                            }else{
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Cannot update profile while offline.")
+                                }
+                            }
+                        }
+                    }, modifier = Modifier.align(CenterHorizontally)) {
+                        Text(text = "Update Profile")
+                    }
                     SnackbarHost(hostState = snackbarHostState)
                 }
             }

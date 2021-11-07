@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavHostController) {
     Box(modifier = Modifier.fillMaxSize(),contentAlignment = Alignment.Center){
-        Image(painter = painterResource(id = R.drawable.suruchat_logo), contentDescription = "app logo",modifier = Modifier.fillMaxSize() )
+        Image(painter = painterResource(id = R.drawable.vartalap_logo), contentDescription = "app logo",modifier = Modifier.fillMaxSize())
         LaunchedEffect(key1 = true){
             delay(1000L)
             navController.navigate(Routes.Login.route){

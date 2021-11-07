@@ -16,8 +16,9 @@ data class Message(
     @PrimaryKey val _id: String,
     @ColumnInfo(name = "sender_id") val senderId: String,
     @ColumnInfo(name = "created_at") val createdAt: Long,
-    @ColumnInfo(name = "text") var text: String,
-    @ColumnInfo(name = "chat_id") var chatId: String = ""
+    @ColumnInfo(name = "text") var text: String = "",
+    @ColumnInfo(name = "chat_id") var chatId: String = "",
+    var image: String = ""
 )
 
 @Entity
@@ -34,7 +35,8 @@ data class UserChatWithMessage(
 data class SendMessageObject(
     val chatId: String,
     val createdAt: Long,
-    var text: String
+    var text: String,
+    val image: String
 )
 
 @Serializable

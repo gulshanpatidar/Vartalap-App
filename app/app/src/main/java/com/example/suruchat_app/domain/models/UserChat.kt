@@ -14,7 +14,8 @@ data class UserChat(
     @ColumnInfo(name = "user_id") val id: String,
     @PrimaryKey @ColumnInfo(name = "chat_id") val chatid: String,
     @ColumnInfo(name = "image_url") val imageurl: String = "",
-    val pubkey: String
+    val pubkey: String,
+    @ColumnInfo(name = "user_name") val username: String
 )
 
 @Serializable

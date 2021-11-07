@@ -6,3 +6,8 @@ import kotlinx.serialization.Serializable
 data class ImageResponse(
     val imageurl: String
 )
+
+@Serializable
+data class SendImageResponse(
+    val image: String
+)

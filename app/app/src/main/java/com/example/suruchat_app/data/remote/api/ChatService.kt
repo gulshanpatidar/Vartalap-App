@@ -32,6 +32,10 @@ interface ChatService {
 
     suspend fun uploadImage(fileName: String, image: File): String
 
+    suspend fun sendImage(filename: String,image: File): String
+
+    suspend fun updateProfile(fullname: String): String
+
     companion object{
         fun create(): ChatService{
             return ChatServiceImpl(

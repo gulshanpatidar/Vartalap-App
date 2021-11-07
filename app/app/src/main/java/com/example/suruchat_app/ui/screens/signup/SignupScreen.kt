@@ -61,7 +61,7 @@ fun SignupScreen(navController: NavHostController,userPreferences: UserPreferenc
                 .background(Color.White), contentAlignment = Alignment.TopCenter
         ) {
             Image(
-                painter = painterResource(R.drawable.suruchat_logo),
+                painter = painterResource(R.drawable.vartalap_logo),
                 contentDescription = "app logo"
             )
         }

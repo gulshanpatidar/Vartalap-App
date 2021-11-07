@@ -3,8 +3,6 @@ package com.example.suruchat_app.ui.screens.chat
 import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,9 +13,10 @@ import com.example.suruchat_app.domain.models.SendMessageObject
 import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.domain.util.Resource
 import com.example.suruchat_app.security.Curve25519Impl
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.File
 
 class ChatViewModel(
     val isInternetAvailable: Boolean,
@@ -33,12 +32,21 @@ class ChatViewModel(
     private val privateKeyBytes: ByteArray = Base64.decode(privateKeyString, Base64.DEFAULT)
     private val publicKey: String = GetToken.PUBLIC_KEY
     private val publicKeyBytes: ByteArray = Base64.decode(publicKey, Base64.DEFAULT)
+    private var simpleImage = ""
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    val imageUrl: MutableState<String> = mutableStateOf("")
+
     init {
         getMessagesInit()
+        viewModelScope.launch {
+            for (i in 1..1000){
+                delay(5000)
+                refresh()
+            }
+        }
     }
 
     fun getMessagesInit() {
@@ -53,7 +61,7 @@ class ChatViewModel(
     fun refresh() {
         if (isInternetAvailable) {
             viewModelScope.launch {
-                _isRefreshing.emit(true)
+//                _isRefreshing.emit(true)
                 getMessages(chatId)
             }
         }
@@ -85,13 +93,19 @@ class ChatViewModel(
 
                     loadedMessages.forEach {
                         if (GetToken.LOGIN_TIME!! < it.createdAt) {
-                            val decryptedMessage =
-                                Curve25519Impl.decryptMessage(
-                                    publicKeyBytes,
-                                    privateKeyBytes,
-                                    it.text
-                                )
-                            it.text = decryptedMessage
+                            if (it.text.isNotEmpty()){
+                                val decryptedMessage =
+                                    Curve25519Impl.decryptMessage(
+                                        publicKeyBytes,
+                                        privateKeyBytes,
+                                        it.text
+                                    )
+                                it.text = decryptedMessage
+                            }else{
+                                val decryptedImage =
+                                    Curve25519Impl.decryptMessage(publicKeyBytes,privateKeyBytes,it.image)
+                                it.image = decryptedImage
+                            }
                             it.chatId = chatId
                             chatUseCases.addMessage(it)
                         }
@@ -113,11 +127,24 @@ class ChatViewModel(
 
     fun sendMessage(messageObject: SendMessageObject) {
         viewModelScope.launch {
-            val simpleText = messageObject.text
-            val encryptedMessage =
-                Curve25519Impl.encryptMessage(publicKeyBytes, privateKeyBytes, simpleText)
-            messageObject.text = encryptedMessage
+            if (messageObject.text.isNotEmpty()){
+                val simpleText = messageObject.text
+                val encryptedMessage =
+                    Curve25519Impl.encryptMessage(publicKeyBytes, privateKeyBytes, simpleText)
+                messageObject.text = encryptedMessage
+            }
             service.sendMessage(messageObject)
+        }
+    }
+
+    fun uploadImage(fileName: String, file: File) {
+        viewModelScope.launch {
+            isLoading.value = true
+            simpleImage = service.sendImage(fileName,file)
+            val encryptedImage = Curve25519Impl.encryptMessage(publicKeyBytes,privateKeyBytes,simpleImage)
+            val messageObject = SendMessageObject(chatId,System.currentTimeMillis(),"",encryptedImage)
+            isLoading.value = false
+            sendMessage(messageObject = messageObject)
         }
     }
 }

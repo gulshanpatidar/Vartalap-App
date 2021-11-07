@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +41,7 @@ fun HomeScreen(
     homeViewModel.getMessageInit()
 
     ScaffoldUse(
-        topBarTitle = "SuruChat",
+        topBarTitle = "Vartalap",
         onClickTopButton = { },
         topButtonImageVector = Icons.Default.Menu,
         navController = navController,
@@ -85,7 +84,7 @@ fun HomeScreen(
                         LazyColumn(modifier = Modifier.fillMaxHeight(0.8f)) {
                             items(userChats) {
                                 Column {
-                                    UserOption(it.fullname, it.imageurl, onUserClicked = {
+                                    UserOption(fullname = it.fullname,username = it.username,userImage = it.imageurl, onUserClicked = {
 
                                         val image = if (it.imageurl.isNotEmpty()){
                                             URLEncoder.encode(
@@ -125,6 +124,7 @@ fun HomeScreen(
 @ExperimentalCoilApi
 @Composable
 fun UserOption(
+    fullname: String,
     username: String,
     userImage: String,
     onUserClicked: () -> Unit,
@@ -166,7 +166,7 @@ fun UserOption(
             )
         }
         Column {
-            Text(text = username, fontSize = 24.sp)
+            Text(text = fullname, fontSize = 24.sp)
             Text(text = username, fontSize = 16.sp)
         }
     }

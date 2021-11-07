@@ -27,4 +27,12 @@ class ProfileViewModel(
             userPreferences.saveUserImage(imageUrl.value)
         }
     }
+
+    fun updateProfile(fullname: String){
+        viewModelScope.launch {
+            service.updateProfile(fullname)
+            GetToken.USER_NAME = fullname
+            userPreferences.saveUserName(fullname)
+        }
+    }
 }

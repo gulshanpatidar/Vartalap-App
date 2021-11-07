@@ -19,4 +19,8 @@ object HttpRoutes {
     const val SEND_MESSAGE = "$BASE_URL/user/message"
 
     const val UPLOAD_IMAGE = "$BASE_URL/user/image"
+
+    const val SEND_IMAGE = "$BASE_URL/user/sendimage"
+
+    const val UPDATE_PROFILE = "$BASE_URL/user/updatefullname"
 }

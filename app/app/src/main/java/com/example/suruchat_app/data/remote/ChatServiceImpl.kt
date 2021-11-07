@@ -3,9 +3,11 @@ package com.example.suruchat_app.data.remote
 import com.example.suruchat_app.data.remote.HttpRoutes.APP_USERS
 import com.example.suruchat_app.data.remote.HttpRoutes.GET_MESSAGES
 import com.example.suruchat_app.data.remote.HttpRoutes.LOGIN
+import com.example.suruchat_app.data.remote.HttpRoutes.SEND_IMAGE
 import com.example.suruchat_app.data.remote.HttpRoutes.SEND_MESSAGE
 import com.example.suruchat_app.data.remote.HttpRoutes.SIGNUP
 import com.example.suruchat_app.data.remote.HttpRoutes.START_CHAT
+import com.example.suruchat_app.data.remote.HttpRoutes.UPDATE_PROFILE
 import com.example.suruchat_app.data.remote.HttpRoutes.UPLOAD_IMAGE
 import com.example.suruchat_app.data.remote.HttpRoutes.USER_CHATS
 import com.example.suruchat_app.data.remote.api.ChatService
@@ -15,6 +17,7 @@ import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.util.*
 import java.io.File
@@ -238,5 +241,64 @@ class ChatServiceImpl(
         }
 
         return imageResponse.imageurl
+    }
+
+    @InternalAPI
+    override suspend fun sendImage(filename: String, image: File): String {
+        val imageResponse = try {
+            client.submitFormWithBinaryData<SendImageResponse>(url = SEND_IMAGE, formData = formData{
+                append("image",image.readBytes(),Headers.build {
+                    append(HttpHeaders.ContentType,"image/png")
+                    append(HttpHeaders.ContentDisposition,"filename=${image.name}")
+                })
+            }) {
+                onUpload{ bytesSentTotal, contentLength ->
+                    println("sent $bytesSentTotal bytes from $contentLength")
+                }
+            }
+        } catch (e: RedirectResponseException) {
+            // 3XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: ClientRequestException) {
+            // 4XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: ServerResponseException) {
+            // 5XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            return e.message.toString()
+        }
+
+        return imageResponse.image
+    }
+
+    override suspend fun updateProfile(fullname: String): String {
+        val httpResponse = try {
+            client.post<HttpResponse>(UPDATE_PROFILE){
+                contentType(ContentType.Application.Json)
+                body = fullname
+            }
+        } catch (e: RedirectResponseException) {
+            // 3XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: ClientRequestException) {
+            // 4XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: ServerResponseException) {
+            // 5XX responses
+            println("Error: ${e.response.status.description}")
+            return e.response.status.description
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            return e.message.toString()
+        }
+
+        return httpResponse.toString()
     }
 }

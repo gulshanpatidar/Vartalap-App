@@ -1,5 +1,6 @@
 package com.example.suruchat_app.ui.screens.add_new_chat
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,9 +39,12 @@ fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatView
         topButtonImageVector = Icons.Default.ArrowBack,
         onClickTopButton = { navController.navigateUp() }) {
 
-        val appUsers by remember {
+        var appUsers = viewModel.appUsers.value
+
+        var tempAppUsers by remember {
             viewModel.appUsers
         }
+
 
         val isLoading by remember {
             viewModel.isLoading
@@ -66,17 +70,30 @@ fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatView
         } else {
             if (errorMessage.isEmpty()) {
                 Column {
-                    SearchBar(query = query, onQueryFilled = { query = it }) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("searching user...")
+                    SearchBar(query = query, onQueryFilled = { userQuery ->
+                        query = userQuery
+                        val list = mutableListOf<User>()
+                        appUsers.forEach{
+                            if (it.username.startsWith(query)){
+                                list.add(it)
+                            }
                         }
+                        tempAppUsers = list
+                    }) {
+                        val list = mutableListOf<User>()
+                        appUsers.forEach{
+                            if (it.username.startsWith(query)){
+                                list.add(it)
+                            }
+                        }
+                        tempAppUsers = list
                     }
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                        items(appUsers) {
+                        items(tempAppUsers) {
                             NewUserOption(it) {
-                                if (viewModel.isInternetAvailable){
+                                if (viewModel.isInternetAvailable) {
                                     viewModel.startChat(it)
-                                }else{
+                                } else {
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar("cannot start chat while offline.")
                                     }
@@ -132,7 +149,7 @@ fun NewUserOption(user: User, onClickNewChat: () -> Unit) {
         }
         Column {
             Text(text = user.fullname, fontSize = 24.sp)
-            Text(text = user.fullname, fontSize = 16.sp)
+            Text(text = user.username, fontSize = 16.sp)
         }
     }
 }

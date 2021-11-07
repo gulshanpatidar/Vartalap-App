@@ -11,7 +11,8 @@ import java.lang.Exception
 data class User(
     @ColumnInfo(name = "full_name") val fullname: String,
     @PrimaryKey val id: String,
-    @ColumnInfo(name = "image_url") val imageurl: String = ""
+    @ColumnInfo(name = "image_url") val imageurl: String = "",
+    @ColumnInfo(name = "user_name") val username: String
 )
 
 @Serializable
