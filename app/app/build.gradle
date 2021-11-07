@@ -115,8 +115,11 @@ dependencies {
     implementation "com.google.accompanist:accompanist-coil:0.7.0"
     def room_version = "2.3.0"
 
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-paging:2.4.0-beta01"
-
+    //cryptography
+    implementation 'org.whispersystems:curve25519-android:0.5.0'
+    //swipe refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.21.0-beta"
 }

@@ -16,35 +16,34 @@ import com.example.suruchat_app.ui.util.Routes
 
 @Composable
 fun NavigationDrawer(
-    viewModel: HomeViewModel,
     navController: NavHostController,
     closeDrawer: () -> Unit
 ) {
 
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text(text = "Logout?",style = MaterialTheme.typography.h5) },
-            text = { Text(text = "Are you sure you want to log out",style = MaterialTheme.typography.body1) },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.logout()
-                    closeDrawer()
-                }) {
-                    Text(text = "YES")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text(text = "NO")
-                }
-            }
-        )
-    }
+//    var showDialog by remember {
+//        mutableStateOf(false)
+//    }
+//
+//    if (showDialog) {
+//        AlertDialog(
+//            onDismissRequest = { showDialog = false },
+//            title = { Text(text = "Logout?",style = MaterialTheme.typography.h5) },
+//            text = { Text(text = "Are you sure you want to log out",style = MaterialTheme.typography.body1) },
+//            confirmButton = {
+//                TextButton(onClick = {
+//                    viewModel.logout()
+//                    closeDrawer()
+//                }) {
+//                    Text(text = "YES")
+//                }
+//            },
+//            dismissButton = {
+//                TextButton(onClick = { showDialog = false }) {
+//                    Text(text = "NO")
+//                }
+//            }
+//        )
+//    }
 
     Column(
         modifier = Modifier
@@ -80,16 +79,16 @@ fun NavigationDrawer(
             fontSize = 20.sp
         )
         Divider(modifier = Modifier.height(1.dp))
-        Text(
-            text = "Log out",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    showDialog = true
-                }
-                .padding(12.dp),
-            fontSize = 20.sp
-        )
-        Divider(modifier = Modifier.height(1.dp))
+//        Text(
+//            text = "Log out",
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .clickable {
+//                    showDialog = true
+//                }
+//                .padding(12.dp),
+//            fontSize = 20.sp
+//        )
+//        Divider(modifier = Modifier.height(1.dp))
     }
 }

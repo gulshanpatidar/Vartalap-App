@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.ui.components.ScaffoldUse
 import com.example.suruchat_app.ui.util.Routes
 import java.net.URLEncoder
@@ -38,11 +39,12 @@ fun HomeScreen(
     homeViewModel: HomeViewModel
 ) {
 
+    homeViewModel.getMessageInit()
+
     ScaffoldUse(
         topBarTitle = "SuruChat",
         onClickTopButton = { },
         topButtonImageVector = Icons.Default.Menu,
-        viewModel = homeViewModel,
         navController = navController,
         fabButton = {
             FabButton {
@@ -51,7 +53,7 @@ fun HomeScreen(
         }
     ) {
 
-        homeViewModel.getMessage()
+//        homeViewModel.getMessage()
 
         val userChats by remember {
             homeViewModel.userChats
@@ -84,10 +86,20 @@ fun HomeScreen(
                             items(userChats) {
                                 Column {
                                     UserOption(it.fullname, it.imageurl, onUserClicked = {
-                                        val image = URLEncoder.encode(
-                                            it.imageurl,
+
+                                        val image = if (it.imageurl.isNotEmpty()){
+                                            URLEncoder.encode(
+                                                it.imageurl,
+                                                StandardCharsets.US_ASCII.toString())
+                                        } else{
+                                            "image"
+                                        }
+
+                                        val pubkey = URLEncoder.encode(
+                                            it.pubkey,
                                             StandardCharsets.UTF_8.toString()
                                         )
+                                        GetToken.PUBLIC_KEY = it.pubkey
                                         navController.navigate(Routes.Chat.route + "/${it.chatid}/${it.fullname}/${image}")
                                     }, onUserImageClicked = {
                                         val image = URLEncoder.encode(
@@ -153,7 +165,10 @@ fun UserOption(
                     .padding(16.dp)
             )
         }
-        Text(text = username, fontSize = 24.sp)
+        Column {
+            Text(text = username, fontSize = 24.sp)
+            Text(text = username, fontSize = 16.sp)
+        }
     }
 }
 

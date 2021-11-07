@@ -45,6 +45,7 @@ object AppModule {
         return ChatUseCases(
             addUser = AddUser(repository = repository),
             getUsers = GetUsers(repository),
+            deleteUser = DeleteUser(repository),
             addUserChat = AddUserChat(repository),
             getUserChats = GetUserChats(repository),
             addMessage = AddMessage(repository),

@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -28,6 +29,7 @@ import coil.annotation.ExperimentalCoilApi
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
+import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.ui.screens.home.HomeViewModel
 import com.example.suruchat_app.ui.theme.SuruChatAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,13 +39,19 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     private lateinit var userPreferences: UserPreferences
+    @Inject lateinit var chatUseCases: ChatUseCases
+    var isInternetAvailable : Boolean = false
 
+    @ExperimentalMaterialApi
     @ExperimentalCoilApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SuruChatAppTheme(darkTheme = false) {
 
+                val navController = rememberNavController()
+                val context = LocalContext.current
+                userPreferences = UserPreferences(context)
                 //check for internet connectivity
                 val connectivityManager =
                     getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -51,11 +59,9 @@ class MainActivity : ComponentActivity() {
                 if (
                     activeNetworkInfo != null && activeNetworkInfo.isConnected
                 ) {
+                    isInternetAvailable = true
                     // A surface container using the 'background' color from the theme
                     Surface(color = MaterialTheme.colors.background) {
-                        val navController = rememberNavController()
-                        val context = LocalContext.current
-                        userPreferences = UserPreferences(context)
                         val mainViewModel = MainViewModel(userPreferences = userPreferences)
                         var tokenChecked by remember {
                             mutableStateOf(false)
@@ -64,6 +70,8 @@ class MainActivity : ComponentActivity() {
                         val userId by mainViewModel.userId.observeAsState()
                         val userImage by mainViewModel.userImage.observeAsState()
                         val userName by mainViewModel.userName.observeAsState()
+                        val privateKey by mainViewModel.privateKey.observeAsState()
+                        val loginTime by mainViewModel.loginTime.observeAsState()
 
                         if (!tokenChecked) {
                             loginToken?.let {
@@ -72,19 +80,58 @@ class MainActivity : ComponentActivity() {
                                     GetToken.USER_ID = userId
                                     GetToken.USER_IMAGE = userImage
                                     GetToken.USER_NAME = userName
-                                    println("Token not empty - $it")
+                                    GetToken.PRIVATE_KEY = privateKey
+                                    GetToken.LOGIN_TIME = loginTime
+                                    println("Token not empty - $it and private key - $privateKey")
                                 }
                                 tokenChecked = true
                             }
                         } else {
                             AppNavigation(
+                                isInternetAvailable = isInternetAvailable,
                                 navController = navController,
-                                userPreferences = userPreferences
+                                userPreferences = userPreferences,
+                                chatUseCases = chatUseCases
                             )
                         }
                     }
                 } else {
-                    NetworkError()
+                    isInternetAvailable = false
+
+                    val mainViewModel = MainViewModel(userPreferences = userPreferences)
+                    var tokenChecked by remember {
+                        mutableStateOf(false)
+                    }
+
+                    val loginToken by mainViewModel.token.observeAsState()
+                    val userId by mainViewModel.userId.observeAsState()
+                    val userImage by mainViewModel.userImage.observeAsState()
+                    val userName by mainViewModel.userName.observeAsState()
+                    val privateKey by mainViewModel.privateKey.observeAsState()
+                    val loginTime by mainViewModel.loginTime.observeAsState()
+
+                    if (!tokenChecked) {
+                        loginToken?.let {
+                            if (it.isNotEmpty()) {
+                                GetToken.ACCESS_TOKEN = loginToken
+                                GetToken.USER_ID = userId
+                                GetToken.USER_IMAGE = userImage
+                                GetToken.USER_NAME = userName
+                                GetToken.PRIVATE_KEY = privateKey
+                                GetToken.LOGIN_TIME = loginTime
+                                println("Token not empty - $it and private key - $privateKey")
+                            }
+                            tokenChecked = true
+                        }
+                    } else {
+                        AppNavigation(
+                            isInternetAvailable = isInternetAvailable,
+                            navController = navController,
+                            userPreferences = userPreferences,
+                            chatUseCases = chatUseCases
+                        )
+                    }
+//                    NetworkError()
                 }
 
             }

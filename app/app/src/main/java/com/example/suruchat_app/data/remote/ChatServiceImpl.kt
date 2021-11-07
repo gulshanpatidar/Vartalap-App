@@ -23,11 +23,11 @@ class ChatServiceImpl(
     private val client: HttpClient
 ) : ChatService {
 
-    override suspend fun login(username: String, password: String): LoginResponse {
+    override suspend fun login(username: String, password: String,publicKey: String): LoginResponse {
         val loginResponse = try {
             client.post<LoginResponse>(LOGIN) {
                 contentType(ContentType.Application.Json)
-                body = LoginObject(username = username, password = password)
+                body = LoginObject(username = username, password = password,pubkey = publicKey)
             }
         } catch (e: RedirectResponseException) {
             // 3XX responses

@@ -5,6 +5,7 @@ import com.example.suruchat_app.data.db.daos.UserDao
 import com.example.suruchat_app.domain.models.Message
 import com.example.suruchat_app.domain.models.User
 import com.example.suruchat_app.domain.models.UserChat
+import com.example.suruchat_app.domain.models.UserChatWithMessage
 import com.example.suruchat_app.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -33,11 +34,15 @@ class ChatRepositoryImpl(
         userDao.insertUserChat(userChat)
     }
 
-    override fun getMessages(): Flow<List<Message>> {
-        return messageDao.getMessages()
-    }
-
     override suspend fun insertMessage(message: Message) {
         messageDao.insertMessage(message)
+    }
+
+    override fun getUserChatWithMessages(): Flow<List<UserChatWithMessage>> {
+        return messageDao.getUserChatWithMessages()
+    }
+
+    override suspend fun getMessagesByChatId(chatId: String): UserChatWithMessage {
+        return messageDao.getMessageByChatId(chatId)
     }
 }
