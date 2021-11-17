@@ -27,7 +27,7 @@ app.use('/auth',authRoutes);
 app.use('/user',userRoutes);
 app.get('/',(req,res,next) => {
     res.json({ 
-        "title" : "Hello from Suru Chat api"
+        "title" : "Hello from Vartalap Chat api"
     })
 })
 
