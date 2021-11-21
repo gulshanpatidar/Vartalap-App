@@ -1,2 +1,2 @@
 # Vartalap-App
-end-to-end chat encryption app using Elliptic Curve25519
+end-to-end encryption chat app using Elliptic Curve25519
