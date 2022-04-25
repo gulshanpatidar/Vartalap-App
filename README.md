@@ -1,2 +1,2 @@
-# SuruChat-App
-end-to-end chat encryption app using Curve25519
+# Vartalap-App
+An end-to-end encrypted Android chat application using Curve25519.
