@@ -1,15 +1,11 @@
+
 # Vartalap-App
-end-to-end encryption chat app using Elliptic Curve25519
+An end-to-end encrypted Android chat application using Curve25519.It is a simple userfriendly realtime chat application in which  Elliptic Curve Cryptography (curve25519) is used to encrypt messages, whose 256 bit key is as much stronger as 3072 bit key of RSA.
 
-Images - 
+Images :-
 
-
-<img src="https://user-images.githubusercontent.com/68196125/146645349-1108df53-4697-42ba-8740-ab2fc2e9a19e.jpeg" width="300">
-
-<img src="https://user-images.githubusercontent.com/68196125/146645730-1c138b43-3d93-4c83-9d44-c4cc953ac38f.jpeg" width="300">
-
-<img src="https://user-images.githubusercontent.com/68196125/146645769-966309a4-6c7c-4fc8-a0aa-f863eb3e6c42.jpeg" width="300">
-
-<img src="https://user-images.githubusercontent.com/68196125/146645771-771e52f5-83b8-45f8-9f33-384457226d4d.jpeg" width="300">
-
-<img src="https://user-images.githubusercontent.com/68196125/146645774-f2a35514-0f0a-40f4-96ca-b0abe378e1eb.jpeg" width="300">
+![Screenshot (90)](https://user-images.githubusercontent.com/86779243/166421527-093832b7-c1ab-48cf-8c6a-336a5b98d3e9.png)
+![Screenshot (91)](https://user-images.githubusercontent.com/86779243/166421538-1ae70604-e0dd-4e98-ba58-eb0a71ef4c2f.png)
+![Screenshot (92)](https://user-images.githubusercontent.com/86779243/166421547-ea4eba5a-0dae-47c8-bb9a-10c1258a180e.png)
+![Screenshot (93)](https://user-images.githubusercontent.com/86779243/166421558-111f32e7-af51-476c-a2a5-92a8ea6e9c7e.png)
+![Screenshot (94)](https://user-images.githubusercontent.com/86779243/166421564-59bb8aa3-59a4-496d-aaaa-183c9ba44bba.png)
