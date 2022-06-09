@@ -6,6 +6,22 @@ const userSchema = new Schema({
      type:String,
      require:true
     },
+    fullname : {
+      type : String,
+      require : true
+    },
+    imageurl : {
+       type : String,
+       default : ""
+    },
+    imagename : {
+       type : String,
+       default : ""
+    },
+    pubkey: { 
+      type : String,
+      default : ""
+    },
     password:{
         type:String,
         require:true

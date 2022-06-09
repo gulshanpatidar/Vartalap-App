@@ -16,6 +16,10 @@ const chatSchema = new Schema({
               type : String,
               require : true
           },
+          image : {
+              type : String,
+              default : ""
+          },
           senderId : {
               type : Schema.Types.ObjectId,
               ref : 'User'

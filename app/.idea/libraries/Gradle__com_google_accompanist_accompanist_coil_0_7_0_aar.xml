@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.accompanist:accompanist-coil:0.7.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/3337a7060c8c295ed019d6168710a023/transformed/jetified-accompanist-coil-0.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3337a7060c8c295ed019d6168710a023/transformed/jetified-accompanist-coil-0.7.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/3337a7060c8c295ed019d6168710a023/transformed/jetified-accompanist-coil-0.7.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.accompanist/accompanist-coil/0.7.0/c63880cc425a52a162ed5c8e937ce94915bb5630/accompanist-coil-0.7.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.accompanist/accompanist-coil/0.7.0/dbe3703f5f17c8cbff9148a2159c63ad6129bc2f/accompanist-coil-0.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,7 +1,8 @@
 const User  = require('../models/user');
 const Chat = require('../models/chat');
 const getChatedUsers = require('../utils/getChatedUsers');
-
+const getAnotherUser = require('../utils/anotheruser');
+const cloudinary = require('cloudinary').v2;
 
 // function for getting users chat 
 exports.getUserChats = async (req,res,next) => {
@@ -11,11 +12,15 @@ exports.getUserChats = async (req,res,next) => {
         const userchatsId = user.chatsid;
         
         for (let i = 0;i < userchatsId.length;i++) {
-           const chatteduser = await User.findById(userchatsId[i]);  
+           const anotheruserId = await getAnotherUser(userchatsId[i],req.userId)
+           const chatteduser = await User.findById(anotheruserId);  
            userChats.push({
-               username : chatteduser.username,
+               fullname : chatteduser.fullname,
                id : chatteduser._id,
-               chatid : userchatsId[i]
+               username: chatteduser.username,
+               chatid : userchatsId[i],
+               imageurl : chatteduser.imageurl,
+               pubkey: chatteduser.pubkey
            })
         }
 
@@ -32,6 +37,7 @@ exports.getUserChats = async (req,res,next) => {
 }
 
 
+// function for getting messages related to a particular chat id
 exports.getChatMessages = async (req,res,next) => {
   
     try {
@@ -58,10 +64,13 @@ exports.getAppUsers = async (req,res,next) => {
        const chatedUsers = await getChatedUsers(req.userId);
        const page = req.body.page || 0;
 
-       const users = await User.find({ _id : { $nin : [...chatedUsers,req.userId]}}).skip(page * 20).limit(20);
+       const users = await User.find({ _id : { $nin : chatedUsers}})
+    
        const resUsers = users.map( user => ({
-           username : user.username,
-           id : user._id 
+           fullname : user.fullname,
+           username: user.username,
+           id : user._id ,
+           imageurl : user.imageurl
        }))
        res.status(200).json({
            users : resUsers  
@@ -109,15 +118,15 @@ exports.startChat = async (req,res,next) => {
 
 // function for adding message to the database
 exports.addMessage = async (req,res,next) => {
-    const chatId = req.body.chatId;
-    const { text,createdAt} = req.body;
+    const { text,image,createdAt,chatId} = req.body;
     try {
       const chat = await Chat.findById(chatId);
       const messages = chat.messages;
-      messages.push({ text: text, senderId:req.userId, createdAt: createdAt})
+      
+      messages.push({ text:text,image:image,senderId:req.userId, createdAt: createdAt})
       await chat.save();
       res.status(200).json({
-         "Message" : "message added successfully"
+         "Message" : "message added successfully."
       })
     }
     catch (e){
@@ -127,3 +136,63 @@ exports.addMessage = async (req,res,next) => {
          next(err);
        } 
 }
+
+
+// function for handling the image upload feature
+exports.userImageupload = async (req,res,next) => {
+  try {
+     const imageurl = req.file.path;
+     const imagename = req.file.filename;
+     const user = await User.findById(req.userId);
+     if (user.imageurl) {
+        await cloudinary.uploader.destroy(user.imagename);
+     }
+     user.imageurl = imageurl;
+     user.imagename = imagename;
+     await user.save();
+     res.status(200).json({
+             imageurl : imageurl
+         }
+     )
+  }  catch (e){
+    if(! err.statusCode) {
+        err.statusCode = 500
+    }
+     next(err);
+   } 
+}
+
+// function for sending image in message
+exports.sendImage = async (req,res,next) => {
+    try {
+       const image = req.file.path;
+       res.status(200).json({
+               image : image
+           }
+       )
+    }  catch (e){
+      if(! err.statusCode) {
+          err.statusCode = 500
+      }
+       next(err);
+     } 
+  }
+
+// function for updating the fullname
+exports.updateFullName = async (req,res,next) => {
+    try {
+       const updatedFullName = req.body.fullname;
+       const user = await User.findById(req.userId);
+       user.fullname = updatedFullName;
+       await user.save();
+       res.status(200).json({
+               "Message" : "FullName Updated Successfully"
+           }
+       )
+    }  catch (e){
+      if(! err.statusCode) {
+          err.statusCode = 500
+      }
+       next(err);
+     } 
+  }
