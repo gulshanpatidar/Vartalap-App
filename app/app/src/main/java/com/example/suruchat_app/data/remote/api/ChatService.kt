@@ -6,11 +6,15 @@ import com.example.suruchat_app.domain.util.Resource
 import com.example.suruchat_app.domain.models.*
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
-import io.ktor.client.features.auth.*
-import io.ktor.client.features.auth.providers.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.kotlinx.serializer.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.security.PublicKey
 
@@ -39,23 +43,27 @@ interface ChatService {
     companion object{
         fun create(): ChatService{
             return ChatServiceImpl(
-                client = HttpClient(Android){
+                client = HttpClient(CIO){
                     install(Logging){
                         level = LogLevel.ALL
                     }
-                    install(JsonFeature){
-                        serializer = KotlinxSerializer()
+                    install(ContentNegotiation){
+                        json(Json {
+                            prettyPrint = true
+                            isLenient = true
+                            ignoreUnknownKeys = true
+                        })
                     }
-                    install(Auth){
-                        bearer {
-                            loadTokens {
-                                BearerTokens(
-                                    accessToken = GetToken.ACCESS_TOKEN.toString(),
-                                    refreshToken = ""
-                                )
-                            }
-                        }
-                    }
+//                    install(Auth){
+//                        bearer {
+//                            loadTokens {
+//                                BearerTokens(
+//                                    accessToken = GetToken.ACCESS_TOKEN.toString(),
+//                                    refreshToken = ""
+//                                )
+//                            }
+//                        }
+//                    }
                 }
             )
         }

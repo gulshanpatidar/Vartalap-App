@@ -9,11 +9,13 @@ import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.security.Curve25519Impl
 import com.example.suruchat_app.ui.util.Routes
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(
-    val navcontroller: NavHostController,
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 

@@ -38,7 +38,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel
 ) {
 
-    homeViewModel.getMessageInit()
+//    homeViewModel.getMessageInit()
 
     ScaffoldUse(
         topBarTitle = "Vartalap",

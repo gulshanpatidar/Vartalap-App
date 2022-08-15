@@ -45,7 +45,6 @@ fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatView
             viewModel.appUsers
         }
 
-
         val isLoading by remember {
             viewModel.isLoading
         }
@@ -92,7 +91,12 @@ fun AddNewChatScreen(navController: NavHostController, viewModel: AddNewChatView
                         items(tempAppUsers) {
                             NewUserOption(it) {
                                 if (viewModel.isInternetAvailable) {
-                                    viewModel.startChat(it)
+                                    coroutineScope.launch {
+                                        val isSuccessful = viewModel.startChat(it)
+                                        if (isSuccessful){
+                                            navController.navigateUp()
+                                        }
+                                    }
                                 } else {
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar("cannot start chat while offline.")

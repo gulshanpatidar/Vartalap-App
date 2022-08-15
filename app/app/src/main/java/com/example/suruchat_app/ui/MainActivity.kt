@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.example.suruchat_app.data.local.GetToken
@@ -38,7 +39,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var userPreferences: UserPreferences
+    @Inject
+    lateinit var userPreferences: UserPreferences
     @Inject lateinit var chatUseCases: ChatUseCases
     var isInternetAvailable : Boolean = false
 
@@ -51,7 +53,6 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
                 val context = LocalContext.current
-                userPreferences = UserPreferences(context)
                 //check for internet connectivity
                 val connectivityManager =
                     getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     isInternetAvailable = true
                     // A surface container using the 'background' color from the theme
                     Surface(color = MaterialTheme.colors.background) {
-                        val mainViewModel = MainViewModel(userPreferences = userPreferences)
+                        val mainViewModel = hiltViewModel<MainViewModel>()
                         var tokenChecked by remember {
                             mutableStateOf(false)
                         }
@@ -98,7 +99,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     isInternetAvailable = false
 
-                    val mainViewModel = MainViewModel(userPreferences = userPreferences)
+                    val mainViewModel = hiltViewModel<MainViewModel>()
                     var tokenChecked by remember {
                         mutableStateOf(false)
                     }

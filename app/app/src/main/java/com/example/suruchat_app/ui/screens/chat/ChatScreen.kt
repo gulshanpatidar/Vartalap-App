@@ -54,13 +54,13 @@ import java.util.*
 @Composable
 fun ChatScreen(
     navController: NavHostController,
-    chatId: String?,
+    chatId: String,
     userName: String?,
     userImage: String?,
     viewModel: ChatViewModel
 ) {
 
-    viewModel.getMessagesInit()
+    viewModel.getMessagesInit(chatId)
 
     println("Chat id is - $chatId")
     var messages by remember {
@@ -166,7 +166,7 @@ fun ChatScreen(
 //                                bitmap.value?.compress(Bitmap.CompressFormat.PNG,90,stream)
 //                                val byteArray = stream.toByteArray()
                                 isLoading = true
-                                viewModel.uploadImage(fileName, file)
+                                viewModel.uploadImage(chatId,fileName, file)
                             }
                         }
                     ) {
@@ -217,7 +217,7 @@ fun ChatScreen(
 
                     SwipeRefresh(
                         state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-                        onRefresh = { viewModel.refresh() }) {
+                        onRefresh = { viewModel.refresh(chatId) }) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()

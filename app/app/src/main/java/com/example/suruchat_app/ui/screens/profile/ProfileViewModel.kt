@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.suruchat_app.data.local.GetToken
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class ProfileViewModel(
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val userPreferences: UserPreferences,
     val isInternetAvailable: Boolean
 ): ViewModel() {

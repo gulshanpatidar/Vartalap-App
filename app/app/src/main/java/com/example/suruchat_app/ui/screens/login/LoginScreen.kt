@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.R
 import com.example.suruchat_app.data.local.GetToken
@@ -54,7 +55,7 @@ fun LoginScreen(navController: NavHostController, userPreferences: UserPreferenc
         }
         val passwordVisibility = remember { mutableStateOf(false) }
 
-        val viewModel = LoginViewModel(navcontroller = navController, userPreferences)
+        val viewModel = hiltViewModel<LoginViewModel>()
 
         var tokenChecked by remember {
             mutableStateOf(false)

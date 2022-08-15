@@ -8,7 +8,7 @@ import com.example.suruchat_app.domain.models.Message
 import com.example.suruchat_app.domain.models.User
 import com.example.suruchat_app.domain.models.UserChat
 
-@Database(entities = [User::class,UserChat::class,Message::class],version = 3)
+@Database(entities = [User::class,UserChat::class,Message::class],version = 6)
 abstract class SuruChatDatabase: RoomDatabase() {
 
     abstract val userDao: UserDao

@@ -4,18 +4,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.domain.models.User
 import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.domain.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddNewChatViewModel(
-    val navController: NavHostController,
+@HiltViewModel
+class AddNewChatViewModel @Inject constructor(
     val isInternetAvailable: Boolean,
     val chatUseCases: ChatUseCases
 ) : ViewModel() {
@@ -89,15 +90,14 @@ class AddNewChatViewModel(
 //        }
     }
 
-    fun startChat(user: User) {
-        if (isInternetAvailable) {
-            viewModelScope.launch {
-                service.startChat(userId = user.id)
-                chatUseCases.deleteUser(user = user)
-                navController.navigateUp()
-            }
+    suspend fun startChat(user: User): Boolean {
+        return if (isInternetAvailable) {
+            service.startChat(userId = user._id)
+            chatUseCases.deleteUser(user = user)
+            true
         } else {
             //can't start new chat without connecting to database.
+            false
         }
     }
 }

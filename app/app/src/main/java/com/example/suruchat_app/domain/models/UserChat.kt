@@ -11,7 +11,7 @@ import java.lang.Exception
 @Serializable
 data class UserChat(
     @ColumnInfo(name = "full_name") val fullname: String,
-    @ColumnInfo(name = "user_id") val id: String,
+    @ColumnInfo(name = "user_id") val _id: String,
     @PrimaryKey @ColumnInfo(name = "chat_id") val chatid: String,
     @ColumnInfo(name = "image_url") val imageurl: String = "",
     val pubkey: String,

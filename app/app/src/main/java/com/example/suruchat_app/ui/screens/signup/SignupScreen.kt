@@ -22,13 +22,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.suruchat_app.R
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.ui.util.Routes
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignupScreen(navController: NavHostController,userPreferences: UserPreferences) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     var username by remember {
         mutableStateOf("")
     }
@@ -45,7 +50,7 @@ fun SignupScreen(navController: NavHostController,userPreferences: UserPreferenc
     }
     var passwordVisibility = remember { mutableStateOf(false) }
 
-    val viewModel = SignupViewModel(navController = navController,userPreferences = userPreferences)
+    val viewModel = hiltViewModel<SignupViewModel>()
 
     val message by viewModel.response.observeAsState("")
 
@@ -145,7 +150,16 @@ fun SignupScreen(navController: NavHostController,userPreferences: UserPreferenc
             Spacer(modifier = Modifier.padding(10.dp))
             Button(
                 onClick = {
-                    viewModel.doSignup(fullname = fullname,username = username,email =  email,password =  password)
+                    coroutineScope.launch {
+                        val isSuccessful = viewModel.doSignup(fullname = fullname,username = username,email =  email,password =  password)
+                        if (isSuccessful){
+                            navController.navigate(Routes.Login.route) {
+                                popUpTo(Routes.SignUp.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

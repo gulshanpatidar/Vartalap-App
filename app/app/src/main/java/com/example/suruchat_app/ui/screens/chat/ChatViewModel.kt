@@ -13,15 +13,17 @@ import com.example.suruchat_app.domain.models.SendMessageObject
 import com.example.suruchat_app.domain.use_cases.ChatUseCases
 import com.example.suruchat_app.domain.util.Resource
 import com.example.suruchat_app.security.Curve25519Impl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class ChatViewModel(
+@HiltViewModel
+class ChatViewModel @Inject constructor(
     val isInternetAvailable: Boolean,
-    val chatUseCases: ChatUseCases,
-    private val chatId: String
+    val chatUseCases: ChatUseCases
 ) : ViewModel() {
 
     var messages: MutableState<List<Message>> = mutableStateOf(ArrayList())
@@ -39,17 +41,27 @@ class ChatViewModel(
 
     val imageUrl: MutableState<String> = mutableStateOf("")
 
-    init {
-        getMessagesInit()
+//    init {
+//        getMessagesInit()
+//        viewModelScope.launch {
+//            for (i in 1..1000){
+//                delay(5000)
+//                refresh()
+//            }
+//        }
+//    }
+
+    fun startGettingMessages(chatId: String){
+        getMessagesInit(chatId)
         viewModelScope.launch {
-            for (i in 1..1000){
+            while(true){
                 delay(5000)
-                refresh()
+                refresh(chatId)
             }
         }
     }
 
-    fun getMessagesInit() {
+    fun getMessagesInit(chatId: String) {
         println("Public key - $publicKey")
         if (isInternetAvailable) {
             getMessagesOfflineThenOnline(chatId)
@@ -58,7 +70,7 @@ class ChatViewModel(
         }
     }
 
-    fun refresh() {
+    fun refresh(chatId: String) {
         if (isInternetAvailable) {
             viewModelScope.launch {
 //                _isRefreshing.emit(true)
@@ -137,7 +149,7 @@ class ChatViewModel(
         }
     }
 
-    fun uploadImage(fileName: String, file: File) {
+    fun uploadImage(chatId: String,fileName: String, file: File) {
         viewModelScope.launch {
             isLoading.value = true
             simpleImage = service.sendImage(fileName,file)

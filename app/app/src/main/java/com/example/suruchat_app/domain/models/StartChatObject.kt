@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StartChatObject(
-    val user: String
+    val userId: String
 )
 
 @Serializable
 data class StartChatResponse(
-    val message: String
+    val message: String = ""
 )

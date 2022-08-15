@@ -12,5 +12,5 @@ data class SignupObject(
 
 @Serializable
 data class SignupResponse(
-    val message: String
+    val message: String = ""
 )

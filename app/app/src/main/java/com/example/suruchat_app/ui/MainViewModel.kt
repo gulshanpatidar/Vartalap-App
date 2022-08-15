@@ -2,9 +2,12 @@ package com.example.suruchat_app.ui
 
 import androidx.lifecycle.*
 import com.example.suruchat_app.data.local.UserPreferences
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     val userPreferences: UserPreferences
 ) : ViewModel() {
 

@@ -8,11 +8,12 @@ import androidx.navigation.NavHostController
 import com.example.suruchat_app.data.local.UserPreferences
 import com.example.suruchat_app.data.remote.api.ChatService
 import com.example.suruchat_app.ui.util.Routes
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class SignupViewModel(
-    val navController: NavHostController,
+@HiltViewModel
+class SignupViewModel @Inject constructor(
     val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -22,17 +23,8 @@ class SignupViewModel(
     val response: LiveData<String> = _response
     private val service = ChatService.create()
 
-    fun doSignup(fullname: String,username: String, email: String, password: String) {
-        viewModelScope.launch {
-
+    suspend fun doSignup(fullname: String,username: String, email: String, password: String) : Boolean{
             _response.value = service.signup(fullname,username, email, password)
-            if (_response.value == "User Signup Successfully") {
-                navController.navigate(Routes.Login.route) {
-                    popUpTo(Routes.SignUp.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        }
+        return _response.value == "User Signup Successfully"
     }
 }

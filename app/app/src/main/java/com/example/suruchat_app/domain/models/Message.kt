@@ -11,9 +11,10 @@ foreignKeys = [ForeignKey(
     childColumns = arrayOf("chat_id"),
     onDelete = ForeignKey.CASCADE
 )])
+
 @Serializable
 data class Message(
-    @PrimaryKey val _id: String,
+    @PrimaryKey val _id: String = "",
     @ColumnInfo(name = "sender_id") val senderId: String,
     @ColumnInfo(name = "created_at") val createdAt: Long,
     @ColumnInfo(name = "text") var text: String = "",
@@ -41,7 +42,7 @@ data class SendMessageObject(
 
 @Serializable
 data class SendMessageResponse(
-    val Message: String
+    val message: String
 )
 
 @Serializable

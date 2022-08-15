@@ -9,10 +9,10 @@ import java.lang.Exception
 @Entity(tableName = "user")
 @Serializable
 data class User(
-    @ColumnInfo(name = "full_name") val fullname: String,
-    @PrimaryKey val id: String,
+    @ColumnInfo(name = "full_name") val fullname: String = "",
+    @PrimaryKey val _id: String = "",
     @ColumnInfo(name = "image_url") val imageurl: String = "",
-    @ColumnInfo(name = "user_name") val username: String
+    @ColumnInfo(name = "user_name") val username: String = ""
 )
 
 @Serializable

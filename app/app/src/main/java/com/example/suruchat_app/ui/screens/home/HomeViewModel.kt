@@ -17,7 +17,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class HomeViewModel(val isInternetAvailable: Boolean,val navController: NavHostController,val userPreferences: UserPreferences,val chatUseCases: ChatUseCases) : ViewModel() {
+class HomeViewModel(
+    val isInternetAvailable: Boolean,
+    val navController: NavHostController,
+    val userPreferences: UserPreferences,
+    val chatUseCases: ChatUseCases
+) : ViewModel() {
 
     var userChats: MutableState<List<UserChat>> = mutableStateOf(ArrayList())
     var isLoading: MutableState<Boolean> = mutableStateOf(true)
@@ -30,28 +35,28 @@ class HomeViewModel(val isInternetAvailable: Boolean,val navController: NavHostC
         getMessageInit()
     }
 
-    fun getMessageInit(){
-        if (isInternetAvailable){
+    fun getMessageInit() {
+        if (isInternetAvailable) {
             getOfflineUserChatsThenOnline()
-        }else{
+        } else {
             getOfflineUserChats()
         }
     }
 
-    private fun getOfflineUserChats(){
+    private fun getOfflineUserChats() {
         getUserChatsJob?.cancel()
         getUserChatsJob = chatUseCases.getUserChats()
-            .onEach{ chats->
+            .onEach { chats ->
                 userChats.value = chats
             }
             .launchIn(viewModelScope)
         isLoading.value = false
     }
 
-    private fun getOfflineUserChatsThenOnline(){
+    private fun getOfflineUserChatsThenOnline() {
         getUserChatsJob?.cancel()
         getUserChatsJob = chatUseCases.getUserChats()
-            .onEach{ chats->
+            .onEach { chats ->
                 userChats.value = chats
             }
             .launchIn(viewModelScope)
@@ -61,18 +66,18 @@ class HomeViewModel(val isInternetAvailable: Boolean,val navController: NavHostC
 
     fun getUserChats() {
         viewModelScope.launch {
-            when(val result = service.getUserChats()){
-                is Resource.Success ->{
+            when (val result = service.getUserChats()) {
+                is Resource.Success -> {
                     val loadedUserChats = result.data!!
                     loadedUserChats.forEach {
                         chatUseCases.addUserChat(it)
                     }
                     isLoading.value = false
                 }
-                is Resource.Error ->{
+                is Resource.Error -> {
                     errorMessage.value = result.message.toString()
                     isLoading.value = false
-                    if (errorMessage.value=="jwt toke expired"){
+                    if (errorMessage.value == "jwt token expired") {
                         logout()
                     }
                 }
@@ -83,7 +88,7 @@ class HomeViewModel(val isInternetAvailable: Boolean,val navController: NavHostC
         }
     }
 
-    fun logout(){
+    fun logout() {
         viewModelScope.launch {
             GetToken.ACCESS_TOKEN = null
             userPreferences.saveUserLoginToken("")
